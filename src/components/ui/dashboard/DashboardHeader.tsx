@@ -2,8 +2,11 @@
 "use client";
 
 import { Bell, Search } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function DashboardHeader() {
+  const pathname = usePathname();
+  if(pathname === "/support" || pathname === "/inbox") return null
   return (
     <header className="bg-white mt-4 shadow-sm border border-primary rounded-lg px-4 md:px-6 py-4 lg:mr-6">
       <div className="flex items-center justify-between">

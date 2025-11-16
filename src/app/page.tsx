@@ -13,7 +13,7 @@ export default function Home() {
         <p>New Delivery</p>
       </Link>
       <Chart />
-      <RecentDeliveriesTable />
+      <RecentDeliveriesTable title="Recent Deliveries" />
     </div>
   );
 }

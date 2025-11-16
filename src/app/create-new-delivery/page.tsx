@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronLeft, MapPin, Calendar, Clock, Truck, AlertCircle } from 'lucide-react'
+import { use, useState } from 'react'
+import { ChevronLeft, MapPin, Calendar, Clock, Truck, AlertCircle, ArrowLeft } from 'lucide-react'
 import VehicleSelector from '@/components/home/vehicle-selector'
 import PaymentSelector from '@/components/home/payment-selector'
+import { useRouter } from 'next/navigation'
 
 
 export default function DeliveryForm() {
+    const router= useRouter();
   const [formData, setFormData] = useState({
     fromAddress: '8 South Avenue',
     toAddress: '',
@@ -51,15 +53,17 @@ export default function DeliveryForm() {
   }
 
   return (
-    <div className="max-w-3xl    px-4 sm:px-6 pt-4">
+    <div className="max-w-4xl    px-4 sm:px-6 pt-4">
       <div className="bg-[#F2F2F2] rounded-2xl shadow-lg overflow-hidden">
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center gap-3">
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          <button onClick={router.back} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
           </button>
           <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Create New Delivery</h1>
         </div>
+
+        
 
         {/* Form Content */}
         <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-6 space-y-6">
@@ -241,7 +245,7 @@ export default function DeliveryForm() {
           {/* Confirm Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base"
+            className="w-full bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base"
           >
             Confirm
           </button>

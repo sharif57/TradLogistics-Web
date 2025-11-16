@@ -18,9 +18,10 @@ import Image from "next/image";
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-    { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
-    { icon: Users, label: "Users", href: "/dashboard/users" },
-    { icon: FileText, label: "Reports", href: "/dashboard/reports" },
+    { icon: BarChart3, label: "Deliveries", href: "/deliveries" },
+    { icon: Users, label: "Payment", href: "/payment" },
+    { icon: FileText, label: "support", href: "/support" },
+    { icon: FileText, label: "Inbox", href: "/inbox" },
     { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];
 
