@@ -38,6 +38,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import DashboardSidebar from "@/components/ui/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/ui/dashboard/DashboardHeader";
+import Providers from "@/Provider/Providers";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -60,19 +61,22 @@ export default function DashboardLayout({
       <body className={`${poppins.variable}  antialiased `}>
         <div className="flex gap-6 h-screen bg-[#E5E5E5]">
           {/* Sidebar */}
-          <DashboardSidebar />
 
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Header */}
-            <DashboardHeader />
+          <Providers>
+            <DashboardSidebar />
 
-            {/* Page Content */}
-            {/* <main className="flex-1 overflow-y-auto py-4 px-4 md:px- lg:px-"> */}
-            <main className="flex-1 overflow-y-auto ">
-              {children}
-            </main>
-          </div>
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Header */}
+              <DashboardHeader />
+
+              {/* Page Content */}
+              <main className="flex-1 overflow-y-auto py-4 px-4 md:px- lg:px-">
+              {/* <main className="flex-1 overflow-y-auto "> */}
+                {children}
+              </main>
+            </div>
+          </Providers>
         </div>
       </body>
     </html>
