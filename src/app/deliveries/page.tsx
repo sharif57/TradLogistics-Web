@@ -36,7 +36,7 @@ export default function Deliveries() {
                 ))}
             </div>
 
-            <RecentDeliveriesTable title="Deliveries" />
+            <RecentDeliveriesTable title="Deliveries" track="track" />
         </div>
     )
 }

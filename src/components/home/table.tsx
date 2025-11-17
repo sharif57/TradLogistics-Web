@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image";
 import Ratting from "../icon/ratting";
 import { Car, Phone } from "lucide-react";
+import Link from "next/link";
 
 interface Delivery {
     delivery_id: number;
@@ -58,7 +59,7 @@ const initialData: Delivery[] = [
     },
 ];
 
-const RecentDeliveriesTable = ({ title }: { title: string }) => {
+const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string }) => {
     const [data] = useState<Delivery[]>(initialData);
     const [search, setSearch] = useState("");
     const [sortConfig, setSortConfig] = useState<{
@@ -184,7 +185,13 @@ const RecentDeliveriesTable = ({ title }: { title: string }) => {
                                         {/* Actions */}
                                         <td className="px-6 py-4 relative" ref={menuRef}>
 
-                                            <Dialog>
+                                            {
+                                                track === "track" ? (
+                                                    <Link href={`/deliveries/${item.delivery_id}`}><Button variant="outline">{track}</Button></Link>
+
+                                                )
+                                                :
+                                            (<Dialog>
                                                 <form>
                                                     <DialogTrigger asChild>
                                                         <Button variant="outline" onClick={(e) => {
@@ -225,7 +232,7 @@ const RecentDeliveriesTable = ({ title }: { title: string }) => {
                                                             <div className="grid gap-3">
                                                                 <Input id="name-1" name="name" placeholder="message driver" />
                                                             </div>
-                                                           
+
                                                         </div>
                                                         <DialogFooter>
                                                             <DialogClose asChild>
@@ -235,7 +242,8 @@ const RecentDeliveriesTable = ({ title }: { title: string }) => {
                                                         </DialogFooter>
                                                     </DialogContent>
                                                 </form>
-                                            </Dialog>
+                                            </Dialog>)
+                                            }
 
                                         </td>
                                     </tr>
