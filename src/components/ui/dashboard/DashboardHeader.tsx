@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 export default function DashboardHeader() {
   const pathname = usePathname();
-  if (pathname === "/support" || pathname === "/inbox" || pathname === "/auth/login" || pathname === "/auth/forgot-password") return null
+  if (pathname === "/support" || pathname === "/inbox" || pathname === "/auth/login" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-email" || pathname === "/auth/business-information") return null
   return (
     <div className="py- px- md:px-6 lg:px-8">
       <header className="bg-white lg:mt-4 shadow-sm border border-primary lg:rounded-lg px-4 md:px-6 py-4 lg:mr-4 ">

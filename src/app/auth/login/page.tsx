@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,6 +15,7 @@ export default function SignInPage() {
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Sign in with:', { email, password })
+    router.push('/auth/business-information')
   }
 
   return (
@@ -33,7 +36,7 @@ export default function SignInPage() {
               </div>
 
               {/* Heading */}
-              <h2 className="text-2xl md:text-5xl font-medium text-[#1E1E1C] text-center mb-8">
+              <h2 className="text-2xl md:text-4xl font-medium text-[#1E1E1C] text-center mb-8">
                 Sign In
               </h2>
 

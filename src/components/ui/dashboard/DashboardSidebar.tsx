@@ -96,25 +96,24 @@
 import { useState } from "react";
 import {
     LayoutDashboard,
-    Users,
     Settings,
     BarChart3,
     Menu,
     X,
-    Home,
-    FileText,
     LogOut,
+    Inbox,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { MdOutlineSupportAgent, MdPayment } from "react-icons/md";
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/" },
     { icon: BarChart3, label: "Deliveries", href: "/deliveries" },
-    { icon: Users, label: "Payment", href: "/payment" },
-    { icon: FileText, label: "Support", href: "/support" },
-    { icon: FileText, label: "Inbox", href: "/inbox" },
+    { icon: MdPayment, label: "Payment", href: "/payment" },
+    { icon: MdOutlineSupportAgent, label: "Support", href: "/support" },
+    { icon: Inbox, label: "Inbox", href: "/inbox" },
     { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
@@ -123,7 +122,7 @@ export default function DashboardSidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
 
-    if (pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password") {
+    if (pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-email" || pathname === "/auth/business-information") {
         return null
     }
 

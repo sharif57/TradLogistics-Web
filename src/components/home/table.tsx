@@ -234,7 +234,7 @@ const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string
                                                             <DialogClose asChild>
                                                                 <Button variant="outline">Cancel</Button>
                                                             </DialogClose>
-                                                            <Button type="submit">Save changes</Button>
+                                                            <Button type="submit">Send</Button>
                                                         </DialogFooter>
                                                     </DialogContent>
                                                 </form>

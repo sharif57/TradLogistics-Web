@@ -57,7 +57,105 @@ const contacts: Contact[] = [
     avatar: '👩‍🦱',
     lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
     timestamp: 'Today | 09:30 PM'
-  }
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
+  {
+    id: '5',
+    name: 'Mary Friend',
+    avatar: '👩‍🦱',
+    lastMessage: 'Hey! Did you finish the Hi-Fi wireframes for...',
+    timestamp: 'Today | 09:30 PM'
+  },
 ]
 
 const initialMessages: Message[] = [

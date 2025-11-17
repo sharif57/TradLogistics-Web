@@ -1,18 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 
 export default function ForgotPassword() {
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleForgot = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Sign in with:', { email, password })
+    console.log('Sign in with:', { email })
+    router.push('/auth/verify-email')
   }
 
   return (
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
               </h2>
 
               {/* Form */}
-              <form onSubmit={handleSignIn} className="space-y-5">
+              <form onSubmit={handleForgot} className="space-y-5">
                 {/* Email Input */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
