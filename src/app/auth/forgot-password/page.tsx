@@ -5,7 +5,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function SignInPage() {
+export default function ForgotPassword() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,8 +33,8 @@ export default function SignInPage() {
               </div>
 
               {/* Heading */}
-              <h2 className="text-2xl md:text-5xl font-medium text-[#1E1E1C] text-center mb-8">
-                Sign In
+              <h2 className="text-2xl md:text-4xl font-medium text-[#1E1E1C] text-center mb-8">
+                Forgot Password
               </h2>
 
               {/* Form */}
@@ -57,53 +57,17 @@ export default function SignInPage() {
                   </div>
                 </div>
 
-                {/* Password Input */}
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Forgot Password */}
-                <div className="text-right">
-                  <Link href="/auth/forgot-password" className="text-sm text-blue-500 hover:text-blue-700 font-medium">
-                    Forgot password?
-                  </Link>
-                </div>
+              
 
                 {/* Sign In Button */}
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
                 >
-                  Sign In
+                 Send OTP
                 </button>
               </form>
 
-              {/* Sign Up Link */}
-              <p className="text-center text-gray-600 text-sm mt-6">
-                {"Don't have an account? "}
-                <a href="#" className="text-blue-500 hover:text-blue-700 font-medium">
-                  Sign up
-                </a>
-              </p>
             </div>
           </div>
         </div>

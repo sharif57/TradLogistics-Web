@@ -9,7 +9,7 @@ import TrustAndSafety from "@/components/setting/trust-and-safety";
 import { Suspense, useState } from "react";
 
 
- function SettingsPage() {
+function SettingsPage() {
   const [activeSection, setActiveSection] = useState("profile");
 
   const renderContent = () => {
@@ -30,18 +30,20 @@ import { Suspense, useState } from "react";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 rounded-lg">
-      <div className="max-w- mx-auto p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-        </div>
+    <div className="py-4 px-4 md:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 rounded-lg ">
+        <div className="max-w- mx-auto p-6">
+          <div className="flex items-center gap-2 mb-8">
+            <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
+          </div>
 
-        <SettingsLayout
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-        >
-          {renderContent()}
-        </SettingsLayout>
+          <SettingsLayout
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+          >
+            {renderContent()}
+          </SettingsLayout>
+        </div>
       </div>
     </div>
   );

@@ -295,8 +295,8 @@ export default function PaymentHistory() {
     }
 
     return (
-        <>
-            <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="py-4 px-4 md:px-6 lg:px-8">
+            <div className="w-full  bg-white rounded-lg shadow-sm border border-gray-200">
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200">
                     <h2 className="text-2xl font-semibold text-gray-900">Payment History</h2>
@@ -407,6 +407,6 @@ export default function PaymentHistory() {
                     )}
                 </DialogContent>
             </Dialog>
-        </>
+        </div>
     )
 }

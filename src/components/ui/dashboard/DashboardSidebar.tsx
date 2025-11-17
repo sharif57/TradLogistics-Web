@@ -63,7 +63,7 @@
 //                         return (
 //                             <div   key={item.href} className="px-4 rounded-lg ">
 //                                 <Link
-                                  
+
 //                                     href={item.href}
 //                                     className={`flex items-center gap-4 px-6 py-3 text-gray-700 mb-2     rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition ${isActive
 //                                             ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white "
@@ -123,7 +123,7 @@ export default function DashboardSidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
 
-    if(pathname === "/auth/login" || pathname === "/auth/register"){
+    if (pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password") {
         return null
     }
 
@@ -151,8 +151,8 @@ export default function DashboardSidebar() {
             >
                 {/* Top content */}
                 <div>
-                    <div className="flex items-center justify-between p-6">
-                        <Image src="/image/logo.png" alt="Logo" width={120} height={50} />
+                    <div className="flex items-center lg:justify-center justify-between p-6">
+                            <Image src="/image/logo.png" alt="Logo" width={120} height={50} />
                         <button
                             onClick={() => setIsOpen(false)}
                             className="lg:hidden text-gray-600 hover:text-gray-900"

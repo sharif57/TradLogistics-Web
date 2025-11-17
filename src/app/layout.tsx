@@ -59,7 +59,7 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable}  antialiased `}>
-        <div className="flex gap-6 h-screen bg-[#E5E5E5]">
+        <div className="flex gap- h-screen bg-[#E5E5E5]">
           {/* Sidebar */}
 
           <Providers>
@@ -71,7 +71,7 @@ export default function DashboardLayout({
               <DashboardHeader />
 
               {/* Page Content */}
-              <main className="flex-1 overflow-y-auto py-4 px-4 md:px- lg:px-">
+              <main className="flex-1 overflow-y-auto ">
               {/* <main className="flex-1 overflow-y-auto "> */}
                 {children}
               </main>

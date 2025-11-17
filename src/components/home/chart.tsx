@@ -38,7 +38,7 @@ const Chart = () => {
                 <XAxis dataKey="name" />
                 <YAxis width="auto" />
                 <Tooltip />
-                <Legend />
+                {/* <Legend /> */}
                 <Bar barSize={60} dataKey="pv" fill="#0A72B9" activeBar={<Rectangle fill="#0A72B9" stroke="blue" />} />
             </BarChart>
         </div>

@@ -16,7 +16,7 @@ export default function Deliveries() {
         }
     ]
     return (
-        <div>
+        <div className='py-4 px-4 md:px-6 lg:px-8'>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-xl py-4">
                 {items?.map((item, index) => (
                     <div

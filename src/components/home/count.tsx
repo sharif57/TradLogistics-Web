@@ -47,7 +47,7 @@ export default function Count() {
                         </div>
                         <div>
                             <p className="text-xl text-[#383838] font-normal">{stat.label}</p>
-                            <p className="text-xl lg:text-5xl font-semibold text-[#1E1E1C]">${stat.value}</p>
+                            <p className="text-xl lg:text-5xl font-semibold text-[#1E1E1C]"> {stat.value}</p>
                         </div>
                     </div>
                 </div>
