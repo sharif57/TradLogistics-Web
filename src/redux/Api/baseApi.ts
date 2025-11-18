@@ -5,7 +5,6 @@ export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://10.10.12.111:8001/api",
     // baseUrl: "https://enitiative.org/api",
-    // baseUrl: "https://api.resocial.site/api/v1",
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
       console.log("token", token);
@@ -18,7 +17,7 @@ export const baseApi = createApi({
   }),
   tagTypes: [
     "User",
-    "Session",
+    "Session",a
     "Story",
     "Blog",
     'Setting'
