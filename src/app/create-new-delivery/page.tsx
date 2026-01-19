@@ -265,6 +265,7 @@ export default function DeliveryForm() {
           <button
             type="submit"
             className="w-full bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base"
+            onClick={() => {router.push('/create-new-delivery/find-rider')}}
           >
             Confirm
           </button>
