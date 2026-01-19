@@ -5,6 +5,7 @@ import Bike from '../icon/bike'
 import Ven from '../icon/ven'
 import Wrecker from '../icon/Wrecker'
 import Truck from '../icon/Truck'
+import Gas from '../icon/gas'
 
 interface VehicleSelectorProps {
     selectedType: string
@@ -13,15 +14,16 @@ interface VehicleSelectorProps {
 
 export default function VehicleSelector({ selectedType, onTypeChange }: VehicleSelectorProps) {
     const vehicles = [
-        { id: 'bike', label: 'Bike', Icon: Bike },
-        { id: 'car', label: 'Car', Icon: Car },
-        { id: 'van', label: 'Van', Icon: Ven },
-        { id: 'wrecker', label: 'Wrecker', Icon: Wrecker }, // or use a more suitable icon like `Caravan` or custom
-        { id: 'removal', label: 'Removals\nTruck', Icon: Truck },
+        { id: 'bike', label: 'Bike Service', Icon: Bike },
+        { id: 'car', label: 'Car Service', Icon: Car },
+        { id: 'van', label: 'Van Service', Icon: Ven },
+        { id: 'removal', label: 'Removals\nTruck service', Icon: Truck },
+        { id: 'wrecker', label: 'Wrecker Service', Icon: Wrecker }, // or use a more suitable icon like `Caravan` or custom
+        { id: 'gas', label: 'Cooking Gas Service', Icon: Gas },
     ]
 
     return (
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3  gap-3">
             {vehicles.map(({ id, label, Icon }) => {
                 const isSelected = selectedType === id
 

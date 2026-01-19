@@ -1,14 +1,14 @@
 'use client'
 
 import { use, useState } from 'react'
-import { ChevronLeft, MapPin, Calendar, Clock, Truck, AlertCircle, ArrowLeft } from 'lucide-react'
+import { ChevronLeft, MapPin, Calendar, Clock, Truck, AlertCircle, ArrowLeft, Plus, Dot } from 'lucide-react'
 import VehicleSelector from '@/components/home/vehicle-selector'
 import PaymentSelector from '@/components/home/payment-selector'
 import { useRouter } from 'next/navigation'
 
 
 export default function DeliveryForm() {
-    const router= useRouter();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fromAddress: '8 South Avenue',
     toAddress: '',
@@ -63,40 +63,45 @@ export default function DeliveryForm() {
           <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Create New Delivery</h1>
         </div>
 
-        
+
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-6 space-y-6">
+        <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-6 space-y-4">
           {/* Address Inputs */}
-          <div className="space-y-3">
-            {/* From Address */}
-            <div className="relative">
-              <div className="flex items-center gap-3 border-2 border-blue-400 rounded-lg px-3 py-3 bg-blue-50">
-                <MapPin className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                <input
-                  type="text"
-                  name="fromAddress"
-                  value={formData.fromAddress}
-                  onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-gray-900 text-sm sm:text-base"
-                  placeholder="From address"
-                />
+          <div className="flex items-center gap-3">
+            <div className="space-y-3 border-2 p-2 rounded-lg border-[#0A72B9] w-full ">
+              {/* From Address */}
+              <div className="relative">
+                <div className="flex items-center gap-3 border-b-2  px-3 py-3 ">
+                  <MapPin className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                  <input
+                    type="text"
+                    name="fromAddress"
+                    value={formData.fromAddress}
+                    onChange={handleInputChange}
+                    className="flex-1 bg-transparent outline-none text-gray-900 text-sm sm:text-base"
+                    placeholder="From address"
+                  />
+                </div>
+              </div>
+
+              {/* To Address */}
+              <div className="relative">
+                <div className="flex items-center gap-3 border-b-2 border-gray-300  px-3 py-3  hover:border-gray-400 transition-colors">
+                  <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <input
+                    type="text"
+                    name="toAddress"
+                    value={formData.toAddress}
+                    onChange={handleInputChange}
+                    className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-400 text-sm sm:text-base"
+                    placeholder="Where to?"
+                  />
+                </div>
               </div>
             </div>
-
-            {/* To Address */}
-            <div className="relative">
-              <div className="flex items-center gap-3 border-2 border-gray-300 rounded-lg px-3 py-3 bg-white hover:border-gray-400 transition-colors">
-                <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                <input
-                  type="text"
-                  name="toAddress"
-                  value={formData.toAddress}
-                  onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-400 text-sm sm:text-base"
-                  placeholder="Destination"
-                />
-              </div>
+            <div className="bg-gradient-to-r from-[#0776BD] to-[#51C7E1] p-2 rounded-full">
+              <Plus className="text-white" />
             </div>
           </div>
 
@@ -106,6 +111,23 @@ export default function DeliveryForm() {
             <VehicleSelector selectedType={formData.vehicleType} onTypeChange={handleVehicleChange} />
           </div>
 
+          <div>
+            <select
+              name="sensitivityLevel"
+              value={formData.sensitivityLevel}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600 text-sm sm:text-base appearance-none bg-[#FFFFFF] bg-no-repeat bg-right"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundPosition: 'right 12px center',
+                paddingRight: '36px',
+              }}
+            >
+              <option value="">Select delivery type</option>
+              <option value="low">Regular Delivery</option>
+              <option value="medium">E-commerce Delivery</option>
+            </select>
+          </div>
           {/* Weight Input */}
           <div>
             <input
@@ -114,19 +136,28 @@ export default function DeliveryForm() {
               value={formData.weight}
               onChange={handleInputChange}
               placeholder="Weight (optional)"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base"
+              className="w-full px-4 py-3 border bg-[#FFFFFF] border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              name="weight"
+              value={formData.weight}
+              onChange={handleInputChange}
+              placeholder="Special instructions"
+              className="w-full px-4 py-3 border bg-[#FFFFFF] border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base"
             />
           </div>
 
           {/* Special Instructions */}
           <div>
-            <textarea
+            <input
               name="specialInstructions"
               value={formData.specialInstructions}
               onChange={handleInputChange}
               placeholder="Special instructions"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base resize-none"
-              rows={3}
+              className="w-full px-4 py-3 border border-gray-300 bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base resize-none"
             />
           </div>
 
@@ -138,7 +169,7 @@ export default function DeliveryForm() {
               value={formData.packageDescription}
               onChange={handleInputChange}
               placeholder="Packages description"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base"
+              className="w-full px-4 py-3 border border-gray-300 bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-sm sm:text-base"
             />
           </div>
 
@@ -197,44 +228,32 @@ export default function DeliveryForm() {
             </label>
           </div>
 
-          {/* Date Selector */}
-          <div>
-            <select
+          <div className="relative">
+            <input
+              type="date"
               name="date"
               value={formData.date}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600 text-sm sm:text-base appearance-none bg-white bg-no-repeat bg-right"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                backgroundPosition: 'right 12px center',
-                paddingRight: '36px',
-              }}
-            >
-              <option value="today">Today</option>
-              <option value="tomorrow">Tomorrow</option>
-              <option value="next-week">Next Week</option>
-            </select>
+              className="peer w-full px-4 py-3 border bg-white border-gray-300 rounded-lg focus:outline-none"
+            />
+            <label className="absolute left-4 top-1/2 -translate-y-1/2 bg-white px-1 text-gray-400 text-sm peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500 peer-valid:top-1 peer-valid:text-xs">
+              Select date
+            </label>
           </div>
-
-          {/* Time Selector */}
-          <div>
-            <select
+          <div className="relative">
+            <input
+              type="time"
               name="time"
               value={formData.time}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600 text-sm sm:text-base appearance-none bg-white bg-no-repeat bg-right"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                backgroundPosition: 'right 12px center',
-                paddingRight: '36px',
-              }}
-            >
-              <option value="new">Now</option>
-              <option value="morning">Morning (6AM-12PM)</option>
-              <option value="afternoon">Afternoon (12PM-6PM)</option>
-              <option value="evening">Evening (6PM-9PM)</option>
-            </select>
+              className="peer w-full px-4 py-3 border border-gray-300 bg-white rounded-lg focus:outline-none"
+            />
+            <label className="absolute left-4 top-1/2 -translate-y-1/2 bg-white px-1 text-gray-400 text-sm peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500 peer-valid:top-1 peer-valid:text-xs">
+              Select time
+            </label>
           </div>
+
+
 
           {/* Payment Method Selector */}
           <div>
