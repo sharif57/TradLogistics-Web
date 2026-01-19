@@ -122,7 +122,7 @@ export default function DashboardSidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
 
-    if (pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-email" || pathname === "/auth/business-information") {
+    if (pathname === "/auth/login" || pathname === "/auth/register" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-email" || pathname === "/auth/business-information" || pathname === "/auth/sign-up") {
         return null
     }
 

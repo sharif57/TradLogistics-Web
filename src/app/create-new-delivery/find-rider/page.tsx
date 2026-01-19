@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 
 "use client";
 
@@ -31,7 +32,7 @@ export default function FindingRider() {
         const timer = setTimeout(() => {
             setLoading(false);
             setShowModal(true);
-        }, 5000); // 5 seconds
+        }, 50000); // 5 seconds
 
         return () => clearTimeout(timer);
     }, []);
@@ -106,7 +107,7 @@ export default function FindingRider() {
                 <>
                     <div className="absolute inset-0 z-60 flex flex-col items-center justify-center
                 bg-black/40 backdrop-blur-sm">
-                        <h1 className="text-4xl font-medium text-white mb-6">We’ve matched you with a trusted driver for your scheduled delivery</h1>
+                        <h1 className="text-xl text-center lg:text-4xl font-medium text-white mb-6">We’ve matched you with a trusted driver for your scheduled delivery</h1>
                         <div className="pointer-events-auto w-[92%] max-w-xl bg-white rounded-xl shadow-lg p-6 mx-4 relative">
 
                             {/* Close button on top-right */}
@@ -142,23 +143,24 @@ export default function FindingRider() {
                                 </div>
                             </div>
 
-                            <div className="mt-4 flex items-center gap-3 w-full">
+                            <div className="mt-4 w-full flex flex-col gap-3 lg:flex-row lg:items-center">
                                 <button
                                     onClick={handleCancel}
-                                    className="flex-1 bg-[#E5E5E5] text-[#1E1E1C] px-4 py-3 rounded-md flex items-center justify-center gap-2"
+                                    className="w-full lg:flex-1 bg-[#E5E5E5] text-[#1E1E1C] px-4 py-3 rounded-md flex items-center justify-center gap-2"
                                 >
-                                    <X />
+                                    <X className="w-5 h-5" />
                                     Cancel this Delivery?
                                 </button>
 
                                 <button
                                     onClick={() => setShowMessagePanel(true)}
-                                    className="flex-1 bg-gradient-to-r from-[#51C7E1] to-[#0776BD] text-white px-4 py-3 rounded-md flex items-center justify-center gap-2"
+                                    className="w-full lg:flex-1 bg-gradient-to-r from-[#51C7E1] to-[#0776BD] text-white px-4 py-3 rounded-md flex items-center justify-center gap-2"
                                 >
-                                    <MessageCircle />
+                                    <MessageCircle className="w-5 h-5" />
                                     Message Driver
                                 </button>
                             </div>
+
 
                         </div>
                     </div>
@@ -168,48 +170,52 @@ export default function FindingRider() {
 
             {/* Message Panel */}
             {showMessagePanel && (
-                <div className="absolute top-8 right-8 z-70 w-[542px] bg-white rounded-lg shadow-lg pointer-events-auto">
-                    <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C] ">Pickup in 3 min</p>
-                    <div className="flex items-center justify-between p-4 ">
-                        <div className="flex items-center gap-4 ">
-                            <img src={driver.avatar} alt="driver" className="w-12 h-12 rounded-full object-cover" />
-                            <div>
-                                <div className="font-medium">{driver.name}</div>
-                                <div className="text-sm text-[#0A72B9] flex items-center gap-1"><Star className="inline w-4 h-4" />{driver.rating}</div>
+                <div className="absolute inset-0 z-60 flex flex-col items-center justify-center
+                bg-black/40 backdrop-blur-sm">
+                    <div className="absolute top-8 right-0 lg:right-8 z-70 w-full lg:w-[542px] bg-white rounded-lg shadow-lg pointer-events-auto ">
+                        <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C] ">Pickup in 3 min</p>
+                        <div className="flex items-center justify-between p-4 ">
+                            <div className="flex items-center gap-4 ">
+                                <img src={driver.avatar} alt="driver" className="w-12 h-12 rounded-full object-cover" />
+                                <div>
+                                    <div className="font-medium">{driver.name}</div>
+                                    <div className="text-sm text-[#0A72B9] flex items-center gap-1"><Star className="inline w-4 h-4" />{driver.rating}</div>
+                                </div>
+                            </div>
+                            <p>{driver?.price}</p>
+                        </div>
+
+                        <div className="p-4 text-sm text-slate-700">
+                            <div className="flex items-center gap-2 text-lg text-[#4B5563]"><CarLite /> <span>{driver.vehicle} • {driver.plate}</span></div>
+                            <div className="flex items-center gap-2 mt-2 text-lg text-[#4B5563]"><Phone /> <span>{driver.phone}</span></div>
+                            <div className="mt-4 text-lg font-medium text-[#4B5563]">
+                                <div className="flex items-center gap-2">
+                                    <span>Delivery Verification PIN:</span>
+                                    <strong className="tracking-widest">{driver.pin.join(" ")}</strong>
+                                    <button onClick={copyPin} className="ml-2 text-sky-600 underline">{pinCopied ? <CopyCheck /> : <Copy />}</button>
+                                </div>
                             </div>
                         </div>
-                        <p>{driver?.price}</p>
-                    </div>
 
-                    <div className="p-4 text-sm text-slate-700">
-                        <div className="flex items-center gap-2 text-lg text-[#4B5563]"><CarLite /> <span>{driver.vehicle} • {driver.plate}</span></div>
-                        <div className="flex items-center gap-2 mt-2 text-lg text-[#4B5563]"><Phone /> <span>{driver.phone}</span></div>
-                        <div className="mt-4 text-lg font-medium text-[#4B5563]">
-                            <div className="flex items-center gap-2">
-                                <span>Delivery Verification PIN:</span>
-                                <strong className="tracking-widest">{driver.pin.join(" ")}</strong>
-                                <button onClick={copyPin} className="ml-2 text-sky-600 underline">{pinCopied ? <CopyCheck /> : <Copy />}</button>
+                        <div className="p-4 ">
+                            <div className="flex gap-2">
+                                <input
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    placeholder="Message driver"
+                                    className="flex-1 rounded-md border px-3 py-2 text-sm"
+                                />
+                                <button onClick={sendMessage} className="w-10 h-10 rounded-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] text-white flex items-center justify-center"><Send /></button>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="p-4 ">
-                        <div className="flex gap-2">
-                            <input
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Message driver"
-                                className="flex-1 rounded-md border px-3 py-2 text-sm"
-                            />
-                            <button onClick={sendMessage} className="w-10 h-10 rounded-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] text-white flex items-center justify-center"><Send /></button>
-                        </div>
-
-                        <div className="mt-3 flex items-center justify-between text-sm bg-[#E5E5E5] p-4 rounded-lg ">
-                            <button onClick={() => { setShowMessagePanel(false); }} className="text-slate-500">Cancel this Delivery?</button>
-                            <button onClick={() => { setShowRating(true); }} className="text-red-500">Finish & Rate</button>
+                            <div className="mt-3 flex items-center justify-between text-sm bg-[#E5E5E5] p-4 rounded-lg ">
+                                <button onClick={() => { setShowMessagePanel(false); }} className="text-slate-500">Cancel this Delivery?</button>
+                                <button onClick={() => { setShowRating(true); }} className="text-red-500">Finish & Rate</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             )}
 
             {/* Confirmation modal */}

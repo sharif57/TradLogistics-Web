@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client"
 
@@ -28,7 +29,7 @@ export default function ChangePassword() {
     setPasswords((prev) => ({ ...prev, [field]: value }))
   }
 
-  const togglePasswordVisibility = (field: string) => {
+  const togglePasswordVisibility = (field: "current" | "new" | "confirm") => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }))
   }
 

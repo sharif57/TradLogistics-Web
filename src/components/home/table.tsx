@@ -65,9 +65,10 @@ const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string
         key: null,
         direction: "asc",
     });
+    
 
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-    const menuRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLTableDataCellElement>(null);
 
     // Toggle action dropdown menu
     const toggleMenu = (id: number) => {
@@ -100,8 +101,9 @@ const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string
         if (!sortConfig.key) return filteredData;
 
         return [...filteredData].sort((a, b) => {
-            const aValue = a[sortConfig.key]  ?? "";
-            const bValue = b[sortConfig.key] ?? "";
+            const key = sortConfig.key as keyof Delivery;
+            const aValue = a[key]  ?? "";
+            const bValue = b[key] ?? "";
 
             if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
             if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
