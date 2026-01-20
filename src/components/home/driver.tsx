@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { truckData } from "../mockData/truckData";
 import Link from "next/link";
 import { driverData } from "../mockData/driverData";
 import Ratting from "../icon/ratting";
@@ -9,7 +7,6 @@ import Ratting from "../icon/ratting";
 
 const Driver = ({ title }: { title: string }) => {
 
-    const menuRef = useRef<HTMLTableDataCellElement>(null);
 
     const statusColor = {
         "On Delivery": "bg-yellow-400",

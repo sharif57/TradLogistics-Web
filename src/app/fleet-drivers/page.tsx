@@ -12,11 +12,11 @@ export default function page() {
       <Fleet />
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        <Link href="/create-new-delivery" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
+        <Link href="/fleet-drivers/add-track" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
           <Plus size={24} />
           <p>Add Truck</p>
         </Link>
-        <Link href="/create-new-delivery" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
+        <Link href="/fleet-drivers/add-new-driver" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
           <Plus size={24} />
           <p>Add Driver</p>
         </Link>
