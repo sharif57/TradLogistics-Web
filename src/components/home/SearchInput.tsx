@@ -6,7 +6,7 @@ import {motion} from "framer-motion";
 // react icons
 import {CiSearch} from "react-icons/ci";
 
-const SearchInput = ({placeholders, searchValue, setSearchValue}) => {
+const SearchInput = ({placeholders, searchValue, setSearchValue}: {placeholders: string[]; searchValue: string; setSearchValue: (value: string) => void}) => {
     const [placeholderText, setPlaceholderText] = useState("");
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
