@@ -1,5 +1,7 @@
+import Driver from '@/components/home/driver'
 import Fleet from '@/components/home/Fleet'
 import Truck from '@/components/home/Truck'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
@@ -20,7 +22,50 @@ export default function page() {
         </Link>
       </div>
 
-      <Truck title="Trucks" />
+      <Tabs defaultValue="track" className="w-full">
+        <TabsList className="grid grid-cols-2 gap-3 bg-transparent">
+          <TabsTrigger
+            value="track"
+            className="
+        py-4 text-base font-medium rounded-lg
+        data-[state=active]:bg-gradient-to-r
+        data-[state=active]:from-[#51C7E1]
+        data-[state=active]:to-[#0776BD]
+        data-[state=active]:text-white
+        data-[state=inactive]:bg-[#F2F2F2]
+        transition-all w-[200px]
+      "
+          >
+            Track
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="driver"
+            className="
+        py-4 text-base font-medium rounded-lg
+        data-[state=active]:bg-gradient-to-r
+           data-[state=active]:from-[#51C7E1]
+        data-[state=active]:to-[#0776BD]
+        data-[state=active]:text-white
+        data-[state=inactive]:bg-[#F2F2F2]
+        data-[state=inactive]:text-gray-600
+        transition-all
+      "
+          >
+            Driver
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="track" className="mt-6">
+          <Truck title="Trucks" />
+        </TabsContent>
+
+        <TabsContent value="driver" className="mt-6">
+          <Driver title="Drivers" />
+        </TabsContent>
+      </Tabs>
+
+
     </div>
   )
 }

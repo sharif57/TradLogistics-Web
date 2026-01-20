@@ -3,9 +3,11 @@
 import { useRef } from "react";
 import { truckData } from "../mockData/truckData";
 import Link from "next/link";
+import { driverData } from "../mockData/driverData";
+import Ratting from "../icon/ratting";
 
 
-const Truck = ({ title }: { title: string }) => {
+const Driver = ({ title }: { title: string }) => {
 
     const menuRef = useRef<HTMLTableDataCellElement>(null);
 
@@ -21,27 +23,24 @@ const Truck = ({ title }: { title: string }) => {
                 <h2 className="text-2xl p-4 font-medium text-[#1A1918]">
                     {title}
                 </h2>
-
-
-
                 {/* Table */}
                 <div className="overflow-hidden border border-gray-200">
                     <table className="w-full text-sm">
                         <thead className="bg-primary text-white">
                             <tr>
                                 {[
-                                    "Truck ID",
-                                    "Zone",
                                     "Driver",
+                                    "Truck",
                                     "Status",
-                                    "Inventory",
-                                    "Last Updated",
+                                    "Deliveries Today",
+                                    "Rating",
+                                    "Earnings (Today)",
                                 ].map((key) => (
                                     <th
                                         key={key}
-                                        className="px-6 py-6 text-left text-lg font-normal cursor-pointer hover:bg-primary/80 transition"
+                                        className="px-6 py-6 text-center text-lg font-normal cursor-pointer hover:bg-primary/80 transition"
                                     >
-                                        <div className="flex items-center gap-2 capitalize">
+                                        <div className="flex items-center justify-center gap-2 capitalize">
                                             {key.replace("_", " ")}
                                         </div>
                                     </th>
@@ -53,7 +52,7 @@ const Truck = ({ title }: { title: string }) => {
                         </thead>
 
                         <tbody>
-                            {truckData.length === 0 ? (
+                            {driverData.length === 0 ? (
                                 <tr>
                                     <td
                                         colSpan={7}
@@ -63,32 +62,40 @@ const Truck = ({ title }: { title: string }) => {
                                     </td>
                                 </tr>
                             ) : (
-                                truckData.map((item) => (
+                                driverData.map((item) => (
                                     <tr
-                                        key={item.truckId}
+                                        key={item.driver}
                                         className="border-t hover:bg-gray-50 transition"
                                     >
-                                        <td className="px-6 py-4">{item.truckId}</td>
-                                        <td className="px-6 py-4">{item.zone}</td>
-                                        <td className="px-6 py-4">{item.driver}</td>
-                                        <td className="px-6 py-4"> <div className="flex items-center gap-2">
-                                            <span
-                                                className={`w-2.5 h-2.5 rounded-full ${statusColor[item.status]}`}
-                                            />
-                                            <span>{item.status}</span>
-                                        </div></td>
+                                        <td className="px-6 py-4 text-center">{item.driver}</td>
+                                        <td className="px-6 py-4 text-center">{item.truck}</td>
 
-                                        <td className="px-6 py-4">{item.inventory}</td>
-                                        <td className="px-6 py-4">{item.lastUpdated}</td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <span className={`w-2.5 h-2.5 rounded-full ${statusColor[item.status]}`} />
+                                                <span>{item.status}</span>
+                                            </div>
+                                        </td>
 
-                                        {/* Actions */}
-                                        <td className="px-6 py-4 relative" ref={menuRef}>
+                                        <td className="px-6 py-4 text-center">{item.deliveriesToday}</td>
 
-                                            <Link href={`/truck/${item.truckId}`} className="text-blue-600 hover:underline">
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="flex items-center justify-center gap-2">
+                                                {item.rating} <Ratting />
+                                            </div>
+                                        </td>
+
+                                        <td className="px-6 py-4 text-center">${item.earningsToday}</td>
+
+                                        <td className="px-6 py-4 text-center">
+                                            <Link
+                                                href={`/truck/${item.driver}`}
+                                                className="text-blue-600 hover:underline"
+                                            >
                                                 View Details
                                             </Link>
-
                                         </td>
+
                                     </tr>
                                 ))
                             )}
@@ -100,4 +107,4 @@ const Truck = ({ title }: { title: string }) => {
     );
 };
 
-export default Truck;
+export default Driver;
