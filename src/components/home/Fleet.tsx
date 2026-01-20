@@ -1,36 +1,35 @@
-import First from "../icon/first";
 import Second from "../icon/second";
-import Third from "../icon/thrid";
-import Four from "../icon/four";
+import Wifi from "../icon/wifi";
+import Five from "../icon/Five";
 
 const stats = [
     {
         id: 1,
-        label: "Total Deliveries",
+        label: "Total Trucks",
         value: "1,284",
-        icon: <First />,
-    },
-    {
-        id: 2,
-        label: "In Transit",
-        value: "42",
         icon: <Second />,
     },
     {
+        id: 2,
+        label: "Active Drivers",
+        value: "42",
+        icon: <Wifi />,
+    },
+    {
         id: 3,
-        label: "Delivered",
+        label: "On Delivery",
         value: "1,195",
-        icon: <Third/>,
+        icon: <Second   />,
     },
     {
         id: 4,
-        label: "Total Spent",
-        value: "$8,450",
-        icon: <Four />,
+        label: "Offline Drivers",
+        value: "47",
+        icon: <Five />,
     },
 ];
 
-export default function Count() {
+export default function Fleet() {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 ">
             {stats.map((stat) => (
