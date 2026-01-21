@@ -5,35 +5,36 @@ import Track from "../icon/Track";
 
 import { useEffect, useState } from "react";
 import {
-  Map,
-  MapMarker,
-  MarkerContent,
-  MapRoute,
-  MarkerLabel,
+    Map,
+    MapMarker,
+    MarkerContent,
+    MapRoute,
+    MarkerLabel,
 } from "@/components/ui/map";
 import { Loader2, Clock, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const start = { name: "Amsterdam", lng: 4.9041, lat: 52.3676 };
 const end = { name: "Rotterdam", lng: 4.4777, lat: 51.9244 };
 
 interface RouteData {
-  coordinates: [number, number][];
-  duration: number; // seconds
-  distance: number; // meters
+    coordinates: [number, number][];
+    duration: number; // seconds
+    distance: number; // meters
 }
 
 function formatDuration(seconds: number): string {
-  const mins = Math.round(seconds / 60);
-  if (mins < 60) return `${mins} min`;
-  const hours = Math.floor(mins / 60);
-  const remainingMins = mins % 60;
-  return `${hours}h ${remainingMins}m`;
+    const mins = Math.round(seconds / 60);
+    if (mins < 60) return `${mins} min`;
+    const hours = Math.floor(mins / 60);
+    const remainingMins = mins % 60;
+    return `${hours}h ${remainingMins}m`;
 }
 
 function formatDistance(meters: number): string {
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(1)} km`;
+    if (meters < 1000) return `${Math.round(meters)} m`;
+    return `${(meters / 1000).toFixed(1)} km`;
 }
 const stats = [
     {
@@ -103,6 +104,7 @@ export default function MapComponent() {
             return 0;
         });
 
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full items-start">
 
@@ -111,14 +113,14 @@ export default function MapComponent() {
 
 
                 <div className="h-[500px] w-full relative">
-                    <Map center={[4.69, 52.14]} zoom={8.5}>
+                    <Map center={[4.69, 52.14]} zoom={8.5} theme="light" >
                         {sortedRoutes.map(({ route, index }) => {
                             const isSelected = index === selectedIndex;
                             return (
                                 <MapRoute
                                     key={index}
                                     coordinates={route.coordinates}
-                                    color={isSelected ? "#6366f1" : "#94a3b8"}
+                                    color={isSelected ? "#0A72B9" : "#94a3b8"}
                                     width={isSelected ? 6 : 5}
                                     opacity={isSelected ? 1 : 0.6}
                                     onClick={() => setSelectedIndex(index)}

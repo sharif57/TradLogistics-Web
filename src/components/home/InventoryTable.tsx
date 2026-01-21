@@ -73,7 +73,7 @@ const InventoryTable = ({ title }: { title: string }) => {
 
                                         <td className="px-6 py-4 text-center">
                                             <Link
-                                                href={`/truck/${item.truckId}`}
+                                                href={`/inventory/add-inventory?truckId=${item.truckId}`}
                                                 className="text-blue-600 hover:underline"
                                             >
                                                 View Details

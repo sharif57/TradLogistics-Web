@@ -56,6 +56,7 @@ export default function CreateManualOrder() {
     }
 
     const handleContinue = () => {
+            router.push('/create-manual-order/price-summary');
         if (validateForm()) {
             console.log('Order data:', orderData)
             alert(`Order created successfully!\n\nLocation: ${orderData.location}\nDestination: ${orderData.destination}\nCylinder Size: ${orderData.cylinderSize}\nBrand: ${orderData.brand}\nTransaction Type: ${orderData.transactionType}\nDelivery Speed: ${orderData.deliverySpeed}`)
