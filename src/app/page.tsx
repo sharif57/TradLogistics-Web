@@ -23,25 +23,26 @@ export default function Home() {
       {
         role === 'gas' ? (
           <>
-            <Count />
-            <Link href="/create-new-delivery" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
+
+            <GasCounter />
+            <Link href="/create-manual-order" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
               <Plus size={24} />
-              <p>New Delivery</p>
+              <p>Create Manual Order</p>
             </Link>
-            <Chart />
-            <RecentDeliveriesTable title="Recent Deliveries" />
+            <div>
+              <MapComponent />
+            </div>
           </>
         )
           : (
             <>
-              <GasCounter />
+              <Count />
               <Link href="/create-new-delivery" className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] p-4 text-center flex items-center justify-center gap-4 text-2xl font-medium text-white rounded-lg ">
                 <Plus size={24} />
-                <p>Create Manual Order</p>
+                <p>New Delivery</p>
               </Link>
-              <div>
-                <MapComponent />
-              </div>
+              <Chart />
+              <RecentDeliveriesTable title="Recent Deliveries" />
             </>
           )
       }
