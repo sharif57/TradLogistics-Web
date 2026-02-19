@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useVerifyEmailMutation } from '@/redux/feature/authSlice';
 import { toast } from 'sonner';
 
-export default function VerifyEmail() {
+export default function ForgotOtp() {
   // http://localhost:3000/auth/verify-email?email=hello%40gmail.com
   const searchParams = new URLSearchParams(window.location.search);
   const email = searchParams.get('email') || '';
@@ -28,7 +28,8 @@ export default function VerifyEmail() {
         email: email 
       }).unwrap();
       toast.success(response.message || 'Email verified successfully!');
-      router.push('/');
+      localStorage.setItem('verificationToken', response.access_token);
+      router.push('/auth/reset-password');
     } catch (error: any) {
       toast.error(error.data?.detail || 'Something went wrong. Please try again later.');
       console.error('Verification error:', error);

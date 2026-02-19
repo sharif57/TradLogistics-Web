@@ -1,28 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState } from 'react'
 import { Mail } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
+import { useForgotPasswordMutation } from '@/redux/feature/authSlice';
+import { toast } from 'sonner';
 
 export default function ForgotPassword() {
   const router = useRouter();
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
-  const handleForgot = (e: React.FormEvent) => {
+  const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Sign in with:', { email })
-    router.push('/auth/verify-email')
+    try {
+      const response = await forgotPassword({
+        email
+      }).unwrap();
+      console.log('Forgot password response:', response);
+      toast.success(response.message || 'OTP sent! Please check your email.');
+      router.push(`/auth/forgot-otp?email=${email}`);
+    } catch (error: any) {
+      toast.error(error.data?.message || 'Failed to send OTP. Please try again.');
+      console.error('Forgot password error:', error);
+    }
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-          
+
           <div className="hidden md:flex items-center justify-center">
-              <Image src="/0.Splash 1.svg" alt="Delivery Scooter Illustration" width={500} height={500} ></Image>
-      
+            <Image src="/0.Splash 1.svg" alt="Delivery Scooter Illustration" width={500} height={500} ></Image>
+
           </div>
 
           <div className="w-full max-w-md mx-auto md:mx-0">
@@ -57,14 +70,15 @@ export default function ForgotPassword() {
                   </div>
                 </div>
 
-              
+
 
                 {/* Sign In Button */}
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+                  disabled={isLoading}
                 >
-                 Send OTP
+                  {isLoading ? 'Sending OTP...' : 'Send OTP'}
                 </button>
               </form>
 

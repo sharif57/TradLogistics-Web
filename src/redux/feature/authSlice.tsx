@@ -6,7 +6,7 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (data) => ({
-        url: "/auth/signup/",
+        url: "/accounts/signup/",
         method: "POST",
         body: data,
       }),
@@ -14,7 +14,7 @@ export const authApi = baseApi.injectEndpoints({
 
     login: builder.mutation({
       query: (credentials) => ({
-        url: "/auth/login",
+        url: "/accounts/login/",
         method: "POST",
         body: credentials,
       }),
@@ -31,7 +31,7 @@ export const authApi = baseApi.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "/auth/forgot-password",
+        url: "/accounts/email/send-otp/",
         method: "POST",
         body: data,
       }),
@@ -39,7 +39,7 @@ export const authApi = baseApi.injectEndpoints({
 
     verifyEmail: builder.mutation({
       query: (data) => ({
-        url: "/auth/verify-email",
+        url: "/accounts/email/verify-email/",
         method: "POST",
         body: data,
       }),
@@ -57,33 +57,6 @@ export const authApi = baseApi.injectEndpoints({
         };
       },
     }),
-
-    googleLogin: builder.mutation({
-      query: ({id_token}) => ({
-        url: "/auth/googleLogin/",
-        method: "POST",
-        body: {id_token: id_token},
-      }),
-    }),
-
-    // facebookLogin: builder.mutation({
-    //   query: ({ access_token }) => ({
-    //     url: "/auth/facebookLogin/",
-    //     method: "POST",
-    //     headers: {
-    //       Authorization: `${access_token}`,
-    //     },
-    //   }),
-    // }),
-    facebookLogin: builder.mutation({
-      query: ({ access_token }) => ({
-        url: "/auth/facebookLogin/",
-        method: "POST",
-        body: {
-          access_token: access_token,
-        },
-      }),
-    }),
   }),
 });
 
@@ -94,6 +67,4 @@ export const {
   useForgotPasswordMutation,
   useVerifyEmailMutation,
   useResetPasswordMutation,
-  useGoogleLoginMutation,
-  useFacebookLoginMutation,
 } = authApi;

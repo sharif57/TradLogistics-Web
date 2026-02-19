@@ -5,27 +5,43 @@ import { Mail, Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useLoginMutation } from '@/redux/feature/authSlice'
+import { toast } from 'sonner'
+import { saveTokens } from '@/service/authService'
 
 export default function SignInPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('');
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const [login, { isLoading }] = useLoginMutation();
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Sign in with:', { email, password })
-    router.push('/auth/business-information')
+    try {
+      const response = await login({
+       phone: email,
+        password
+      }).unwrap();
+      localStorage.setItem('accessToken', response.access_token);
+      await saveTokens(response.access_token);
+      toast.success(response.message || 'Login successful!');
+      router.push('/')
+    } catch (error: any) {
+      toast.error(error.data?.detail || 'Login failed. Please try again.');
+      console.error('Login error:', error);
+    }
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-          
+
           <div className="hidden md:flex items-center justify-center">
-              <Image src="/0.Splash 1.svg" alt="Delivery Scooter Illustration" width={500} height={500} ></Image>
-      
+            <Image src="/0.Splash 1.svg" alt="Delivery Scooter Illustration" width={500} height={500} ></Image>
+
           </div>
 
           <div className="w-full max-w-md mx-auto md:mx-0">
@@ -50,7 +66,8 @@ export default function SignInPage() {
                   <div className="relative">
                     <input
                       id="email"
-                      type="email"
+                      type="telephone"
+                      required
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -68,6 +85,7 @@ export default function SignInPage() {
                   <div className="relative">
                     <input
                       id="password"
+                      required
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       value={password}
@@ -95,8 +113,9 @@ export default function SignInPage() {
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+                  disabled={isLoading}
                 >
-                  Sign In
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
               </form>
 

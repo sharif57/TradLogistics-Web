@@ -54,6 +54,7 @@ export default function DashboardSidebar() {
       "/auth/verify-email",
       "/auth/business-information",
       "/auth/sign-up",
+      "/auth/forgot-otp"
     ].includes(pathname)
   ) {
     return null;
@@ -105,8 +106,8 @@ export default function DashboardSidebar() {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-4 px-6 py-3 rounded-lg transition font-medium ${isActive
-                      ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white"
-                      : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                    ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white"
+                    : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
                     }`}
                   onClick={() => setIsOpen(false)}
                 >

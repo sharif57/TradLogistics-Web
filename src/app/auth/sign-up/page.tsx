@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Eye, EyeOff, Paperclip } from 'lucide-react'
+import { Eye, EyeOff, Paperclip } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useRegisterMutation } from '@/redux/feature/authSlice'
+import { toast } from 'sonner'
 
 export default function SignInPage() {
     const router = useRouter();
@@ -18,40 +20,67 @@ export default function SignInPage() {
     const [phoneNumber, setPhoneNumber] = useState('')
     const [businessAddress, setBusinessAddress] = useState('')
     const [businessLicense, setBusinessLicense] = useState<File | null>(null)
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-    const handleSignIn = (e: React.FormEvent) => {
+    const [register, { isLoading }] = useRegisterMutation();
+
+    const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            // Validation
-            if (!businessType || !businessName || !contactPerson || !phoneNumber || !businessAddress || !email || !password) {
-                alert('Please fill in all required fields');
-                return;
+
+            const nextErrors: Record<string, string> = {}
+            if (!businessType) nextErrors.businessType = 'Business type is required.'
+            if (!businessName) nextErrors.businessName = 'Business name is required.'
+            if (!contactPerson) nextErrors.contactPerson = 'Contact person is required.'
+            if (!phoneNumber) nextErrors.phoneNumber = 'Phone number is required.'
+            if (!businessAddress) nextErrors.businessAddress = 'Business address is required.'
+            if (!email) nextErrors.email = 'Email is required.'
+            if (!password) nextErrors.password = 'Password is required.'
+
+            if (Object.keys(nextErrors).length > 0) {
+                setFieldErrors(nextErrors)
+                toast.error('Please fill in all required fields.')
+                return
             }
 
+            setFieldErrors({})
+
+            const fromData = new FormData();
+            fromData.append('business_type', businessType);
+            fromData.append('business_name', businessName);
+            fromData.append('first_name', contactPerson);
+            fromData.append('phone', phoneNumber);
+            fromData.append('role', 'company');
+            fromData.append('business_address', businessAddress);
+            fromData.append('email', email);
+            fromData.append('password', password);
+
+            if (businessLicense) {
+                fromData.append('business_license', businessLicense);
+            }
+            const response = await register(fromData).unwrap();
+            toast.success(response.message || 'Registration successful! Please check your email to verify your account.');
             // Store data
             localStorage.setItem('businessType', businessType);
-        
-
-            console.log('Sign up with:', {
-                businessType,
-                businessName,
-                contactPerson,
-                phoneNumber,
-                businessAddress,
-                email,
-                password,
-                businessLicense: businessLicense?.name
-            });
-
-            router.push('/');
-        } catch (error) {
+            router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+        } catch (error: any) {
             console.error('Sign up error:', error);
-            alert('An error occurred during sign up. Please try again.');
+            const apiMessage = error?.data?.message || error?.message
+            const phoneExists = typeof apiMessage === 'string' && apiMessage.toLowerCase().includes('phone')
+            if (phoneExists) {
+                setFieldErrors((prev) => ({
+                    ...prev,
+                    phoneNumber: 'User with this phone already exists.'
+                }))
+                toast.error('Phone number already exists.')
+            } else {
+                toast.error(error?.message || 'Registration failed. Please try again.')
+            }
         }
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center px-4 py-8">
+        <main className="min-h-screen flex items-center justify-center px-4 py-8 ">
             <div className="w-full max-w-7xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
 
@@ -60,7 +89,7 @@ export default function SignInPage() {
 
                     </div>
 
-                    <div className="w-full max-w-md mx-auto md:mx-0">
+                    <div className="w-full max-w-md mx-auto md:mx-0 h-full lg:h-[90vh] overflow-y-auto overflow-x-hidden hide-scrollbar">
                         <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
                             {/* Logo */}
                             <div className="text-center mb-8 flex items-center justify-center">
@@ -86,10 +115,14 @@ export default function SignInPage() {
                                             <SelectValue placeholder="Select business type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="retail">Retail Business</SelectItem>
-                                            <SelectItem value="gas">Gas Company</SelectItem>
+
+                                            <SelectItem value="ecommerce">Retail Business</SelectItem>
+                                            <SelectItem value="gas_company">Gas Company</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    {fieldErrors.businessType && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.businessType}</p>
+                                    )}
 
                                 </div>
                                 <div>
@@ -106,6 +139,9 @@ export default function SignInPage() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
+                                    {fieldErrors.businessName && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.businessName}</p>
+                                    )}
                                 </div>
                                 <div>
                                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -121,9 +157,12 @@ export default function SignInPage() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
+                                    {fieldErrors.contactPerson && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.contactPerson}</p>
+                                    )}
                                 </div>
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
                                         Phone Number
                                     </label>
                                     <div className="relative">
@@ -136,9 +175,12 @@ export default function SignInPage() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
+                                    {fieldErrors.phoneNumber && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.phoneNumber}</p>
+                                    )}
                                 </div>
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="businessAddress" className="block text-sm font-medium text-gray-700 mb-2">
                                         Business Address
                                     </label>
                                     <div className="relative">
@@ -151,6 +193,9 @@ export default function SignInPage() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
+                                    {fieldErrors.businessAddress && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.businessAddress}</p>
+                                    )}
                                 </div>
                                 <div>
                                     <label htmlFor="businessLicense" className="block text-sm font-medium text-gray-700 mb-2">
@@ -186,6 +231,9 @@ export default function SignInPage() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
+                                    {fieldErrors.email && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.email}</p>
+                                    )}
                                 </div>
                                 {/* Password Input */}
                                 <div>
@@ -209,6 +257,9 @@ export default function SignInPage() {
                                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                         </button>
                                     </div>
+                                    {fieldErrors.password && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.password}</p>
+                                    )}
                                 </div>
 
 
@@ -217,8 +268,9 @@ export default function SignInPage() {
                                 <button
                                     type="submit"
                                     className="w-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+                                    disabled={isLoading}
                                 >
-                                    Sign Up
+                                    {isLoading ? 'Signing Up...' : 'Sign Up'}
                                 </button>
                             </form>
 
@@ -236,4 +288,4 @@ export default function SignInPage() {
             </div>
         </main>
     )
-}
+} 
