@@ -7,7 +7,7 @@ const settingSlice = baseApi.injectEndpoints({
 
     getTermsAndConditions: builder.query({
       query: () => ({
-        url: `/terms`,
+        url: `/settings/terms_conditions/`,
         method: "GET",
       }),
       providesTags: ["Setting"],
@@ -24,7 +24,7 @@ const settingSlice = baseApi.injectEndpoints({
 
     getPrivacyPolicy: builder.query({
       query: () => ({
-        url: `/privacy`,
+        url: `/settings/privacy_policies/`,
         method: "GET",
       }),
       providesTags: ["Setting"],
@@ -42,7 +42,7 @@ const settingSlice = baseApi.injectEndpoints({
 
     getAbout: builder.query({
       query: () => ({
-        url: `/about`,
+        url: `/settings/about_us/`,
         method: "GET",
       }),
       providesTags: ["Setting"],

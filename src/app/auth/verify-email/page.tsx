@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useRef, ChangeEvent, KeyboardEvent, ClipboardEvent } from 'react'
+import { useState, useRef, ChangeEvent, KeyboardEvent, ClipboardEvent, Suspense } from 'react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useVerifyEmailMutation } from '@/redux/feature/authSlice';
 import { toast } from 'sonner';
 
-export default function VerifyEmail() {
+ function VerifyEmail() {
   // http://localhost:3000/auth/verify-email?email=hello%40gmail.com
-  const searchParams = new URLSearchParams(window.location.search);
-  const email = searchParams.get('email') || '';
+const searchParams = useSearchParams()
+  const email = searchParams.get('email') || ''
   const router = useRouter();
 
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', ''])
@@ -170,5 +170,13 @@ export default function VerifyEmail() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <VerifyEmail />
+    </Suspense>
   )
 }

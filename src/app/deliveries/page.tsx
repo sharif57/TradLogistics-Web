@@ -1,6 +1,8 @@
+'use client';
 import RecentDeliveriesTable from '@/components/home/table'
 
 export default function Deliveries() {
+   
     const items = [
         {
             title: 'In Transit',

@@ -65,7 +65,7 @@ export default function DashboardSidebar() {
     router.push("/auth/login");
   };
 
-  const activeMenuItems = role === "gas" ? gasCompanyMenuItems : menuItems;
+  const activeMenuItems = role === "gas_company" ? gasCompanyMenuItems : menuItems;
 
   return (
     <>

@@ -16,7 +16,7 @@ export default function TrustAndSafety() {
   const { data, isLoading, error } = useGetTermsAndConditionsQuery(undefined)
   const [editTermsAndConditions] = useEditTermsAndConditionsMutation()
 
-  const termsDescription = data?.data[0]?.description || ""
+  const termsDescription = data?.data[0]?.content || ""
 
   const handleEditClick = () => {
     setValue(termsDescription)

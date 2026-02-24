@@ -17,9 +17,9 @@ export default function VehicleSelector({ selectedType, onTypeChange }: VehicleS
         { id: 'bike', label: 'Bike Service', Icon: Bike },
         { id: 'car', label: 'Car Service', Icon: Car },
         { id: 'van', label: 'Van Service', Icon: Ven },
-        { id: 'removal', label: 'Removals\nTruck service', Icon: Truck },
-        { id: 'wrecker', label: 'Wrecker Service', Icon: Wrecker }, // or use a more suitable icon like `Caravan` or custom
-        { id: 'gas', label: 'Cooking Gas Service', Icon: Gas },
+        // { id: 'removal', label: 'Removals\nTruck service', Icon: Truck },
+        // { id: 'wrecker', label: 'Wrecker Service', Icon: Wrecker }, // or use a more suitable icon like `Caravan` or custom
+        // { id: 'gas', label: 'Cooking Gas Service', Icon: Gas },
     ]
 
     return (

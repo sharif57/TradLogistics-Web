@@ -15,7 +15,7 @@ export default function PrivacyAndPolicy() {
   const { data, isLoading, error } = useGetPrivacyPolicyQuery(undefined)
   const [updatePrivacyPolice] = useUpdatePrivacyPoliceMutation()
 
-  const policyDescription = data?.data[0]?.description || ""
+  const policyDescription = data?.data[0]?.content || ""
 
   const handleEditClick = () => {
     setValue(policyDescription) 

@@ -15,7 +15,7 @@ export default function AboutUs() {
   const [updateAbout] = useUpdateAboutMutation()
 
   // Initialize editor with existing about content when data is available
-  const aboutDescription = data?.data[0]?.description || ""
+  const aboutDescription = data?.data[0]?.content || ""
 
   const handleEditClick = () => {
     setValue(aboutDescription) // Populate editor with current about content

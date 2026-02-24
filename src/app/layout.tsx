@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+// @ts-ignore
 import "./globals.css";
 import DashboardSidebar from "@/components/ui/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/ui/dashboard/DashboardHeader";
@@ -13,7 +14,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "My Dashboard",
+  title: "TradLogistics - Dashboard",
   description: "Admin dashboard built with Next.js and Poppins font",
 };
 

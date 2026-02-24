@@ -33,7 +33,7 @@ export default function SignInPage() {
       console.error('Login error:', error);
     }
   }
-
+         
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-7xl">
@@ -41,7 +41,6 @@ export default function SignInPage() {
 
           <div className="hidden md:flex items-center justify-center">
             <Image src="/0.Splash 1.svg" alt="Delivery Scooter Illustration" width={500} height={500} ></Image>
-
           </div>
 
           <div className="w-full max-w-md mx-auto md:mx-0">
@@ -129,7 +128,6 @@ export default function SignInPage() {
             </div>
           </div>
         </div>
-
       </div>
     </main>
   )
