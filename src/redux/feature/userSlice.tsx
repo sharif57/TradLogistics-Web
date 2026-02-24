@@ -1,13 +1,12 @@
 "use client";
 
-import { read } from "fs";
 import baseApi from "../Api/baseApi";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     userProfile: builder.query({
       query: () => ({
-        url: "/user/profile",
+        url: "/accounts/profile/",
         method: "GET",
       }),
 
@@ -16,7 +15,7 @@ export const userApi = baseApi.injectEndpoints({
 
     updateProfile: builder.mutation({
       query: (data) => ({
-        url: "/user/update-profile",
+        url: "/accounts/profile/",
         method: "PATCH",
         body: data,
       }),

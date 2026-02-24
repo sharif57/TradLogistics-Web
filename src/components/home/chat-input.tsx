@@ -65,7 +65,7 @@
 // }
 'use client'
 
-import { Send, Plus } from 'lucide-react'
+import { Send, Plus, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
 
 interface ChatInputProps {
@@ -136,8 +136,8 @@ export default function ChatInput({
           <button
             onClick={onSendMessage}
             disabled={!inputValue.trim()}
-            className="bg-blue-500  hover:bg-blue-600 text-white p-2 rounded-full">
-            <Plus size={20} />
+            className="bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white p-2 rounded-full">
+            <ArrowUp size={20} />
           </button>
         </div>
 

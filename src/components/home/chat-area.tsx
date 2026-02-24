@@ -1,5 +1,6 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Menu } from 'lucide-react'
 import ChatMessages from './chat-messages'
 import ChatInput from './chat-input'
@@ -17,14 +18,20 @@ interface Message {
 
 interface Contact {
   id: string
+  conversationId: number
+  publicId: string
+  userId: number
   name: string
-  avatar: string
+  role: string
+  phone: string
+  avatar: string | null
   lastMessage: string
   timestamp: string
+  unreadCount: number
 }
 
 interface ChatAreaProps {
-  contact: Contact
+  contact: Contact | null
   messages: Message[]
   inputValue: string
   onInputChange: (value: string) => void
@@ -40,9 +47,11 @@ export default function ChatArea({
   onSendMessage,
   onMenuClick
 }: ChatAreaProps) {
+  const IMAGE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL
+
   return (
     <div className="flex-1 flex flex-col h-screen w-full overflow-hidden">
-      <header className="flex-shrink-0 w-full border-b border-border bg-background">
+      <header className="shrink-0 w-full border-b border-border bg-background">
         <div className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6 md:px-8">
           <div className="flex items-center gap-3">
             <button
@@ -53,22 +62,27 @@ export default function ChatArea({
               <Menu className="w-5 h-5 text-foreground" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg">
-                {contact.avatar}
-              </div>
+              <Avatar>
+                <AvatarImage
+                  src={contact?.avatar ? `${IMAGE}${contact.avatar}` : 'https://github.com/shadcn.png'}
+                  alt={contact?.name || 'User'}
+                  // className="grayscale"
+                />
+                <AvatarFallback>{contact?.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+              </Avatar>
               <div className="hidden sm:block">
-                <p className="text-sm font-medium text-foreground">{contact.name}</p>
+                <p className="text-sm font-medium text-foreground">{contact?.name || 'Select a conversation'}</p>
               </div>
             </div>
           </div>
-          <button
+          {/* <button
             className="p-2 hover:bg-muted rounded-lg transition-colors hover:scale-105"
             aria-label="Search"
           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-          </button>
+          </button> */}
         </div>
       </header>
 

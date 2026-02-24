@@ -32,19 +32,35 @@ export default function ProfileInformation() {
   })
 
   // Set initial form values when data is loaded
+  // useEffect(() => {
+  //   if (data?.data) {
+  //     setValue("name", `${data.data.first_name || ""} ${data.data.last_name || ""}`.trim())
+  //     setValue("email", data.data.email || "")
+  //     // Use the API URL only for server-hosted images, fallback to placeholder
+  //     const imageUrl = data.data.profile_image
+  //       ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${data.data.profile_image}`
+  //       : ""
+  //     setPreviewImage(imageUrl)
+  //   }
+  // }, [data, setValue])
+  // Replace this useEffect:
   useEffect(() => {
     if (data?.data) {
-      setValue("name", data.data.name || "")
+      setValue("name", `${data.data.first_name || ""} ${data.data.last_name || ""}`.trim())
       setValue("email", data.data.email || "")
-      // Use the API URL only for server-hosted images, fallback to placeholder
-      const imageUrl = data.data.image
-        ? `${process.env.NEXT_PUBLIC_API_URL}${data.data.image}`
-        : "/placeholder.svg?height=96&width=96"
+
+      // ✅ Fix: ensure no double slash, fallback to placeholder
+      const profileImage = data.data.profile_image
+      const baseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL?.replace(/\/$/, "") // remove trailing slash
+      const imageUrl = profileImage
+        ? `${baseUrl}${profileImage.startsWith("/") ? "" : "/"}${profileImage}`
+        : null
+
       setPreviewImage(imageUrl)
     }
   }, [data, setValue])
 
-  const handleImageChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) {
       return
@@ -65,7 +81,7 @@ export default function ProfileInformation() {
       const reader = new FileReader()
       reader.onloadend = () => {
         if (typeof reader.result === "string" || reader.result === null) {
-          setPreviewImage(reader.result) 
+          setPreviewImage(reader.result)
         }
       }
       reader.readAsDataURL(file)
@@ -76,9 +92,11 @@ export default function ProfileInformation() {
   const onSubmit = async (formData: any) => {
     try {
       const formDataToSend = new FormData()
-      formDataToSend.append("name", formData.name)
+      formDataToSend.append("first_name", formData.name.split(" ")[0])
+      formDataToSend.append("last_name", formData.name.split(" ").slice(1).join(" "))
+
       if (formData.profileImage) {
-        formDataToSend.append("image", formData.profileImage)
+        formDataToSend.append("profile_image", formData.profileImage)
       }
 
       const response = await updateProfile(formDataToSend).unwrap()
@@ -87,9 +105,9 @@ export default function ProfileInformation() {
     } catch (error) {
       toast.error(
         "Failed to update profile: " +
-          (error && typeof error === "object" && "message" in error
-            ? (error as { message: string }).message
-            : "Unknown error")
+        (error && typeof error === "object" && "message" in error
+          ? (error as { message: string }).message
+          : "Unknown error")
       )
     }
   }
@@ -104,12 +122,16 @@ export default function ProfileInformation() {
       <div className="flex justify-center">
         <div className="relative">
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={previewImage || "/placeholder.svg?height=96&width=96"}
               alt="Profile picture"
               width={96}
               height={96}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/placeholder.svg?height=96&width=96"
+              }}
             />
           </div>
           <button
@@ -166,7 +188,7 @@ export default function ProfileInformation() {
               disabled={!isEditing.email}
               className="pr-10 bg-gray-50 border-gray-200"
             />
-           
+
           </div>
         </div>
       </div>

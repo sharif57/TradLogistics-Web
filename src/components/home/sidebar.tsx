@@ -1,19 +1,26 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { X, Search } from 'lucide-react'
 import { useState } from 'react'
 
 interface Contact {
     id: string
+    conversationId: number
+    publicId: string
+    userId: number
     name: string
-    avatar: string
+    role: string
+    phone: string
+    avatar: string | null
     lastMessage: string
     timestamp: string
+    unreadCount: number
 }
 
 interface SidebarProps {
     contacts: Contact[]
-    selectedContact: Contact
+    selectedContact: Contact | null
     onSelectContact: (contact: Contact) => void
     isOpen: boolean
     onClose: () => void
@@ -27,6 +34,7 @@ export default function Sidebar({
     onClose
 }: SidebarProps) {
     const [searchTerm, setSearchTerm] = useState('')
+    const IMAGE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL
 
     const filteredContacts = contacts.filter(contact =>
         contact.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -47,7 +55,7 @@ export default function Sidebar({
                     } flex flex-col h-screen overflow-hidden`}
             >
                 {/* Header - fixed height, doesn't scroll */}
-                <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border">
+                <div className="shrink-0 flex items-center justify-between p-4 border-b border-border">
                     <h2 className="text-lg font-semibold text-foreground">All Messages</h2>
                     <button
                         onClick={onClose}
@@ -59,9 +67,9 @@ export default function Sidebar({
                 </div>
 
                 {/* Search - fixed height, doesn't scroll */}
-                <div className="flex-shrink-0 p-4 border-b border-border">
+                <div className="shrink-0 p-4 border-b border-border">
                     <div className="flex items-center gap-2 bg-background rounded-lg px-3 py-2">
-                        <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        <Search className="w-4 h-4 text-muted-foreground shrink-0" />
                         <input
                             type="text"
                             placeholder="Search..."
@@ -81,13 +89,18 @@ export default function Sidebar({
                                 onSelectContact(contact)
                                 onClose()
                             }}
-                            className={`w-full px-4 py-3 flex items-start gap-3 border-b border-border hover:bg-background transition-colors ${selectedContact.id === contact.id ? 'bg-[#F8F9FD]' : ''
+                            className={`w-full px-4 py-3 flex items-start gap-3 border-b border-border hover:bg-background transition-colors ${selectedContact?.id === contact.id ? 'bg-[#F8F9FD]' : ''
                                 }`}
                         >
                             {/* Avatar */}
-                            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-lg flex-shrink-0 mt-1">
-                                {contact.avatar}
-                            </div>
+                            <Avatar>
+                                <AvatarImage
+                                    src={contact.avatar ? `${IMAGE}${contact.avatar}` : 'https://github.com/shadcn.png'}
+                                    alt={contact.name}
+                                    // className="grayscale"
+                                />
+                                <AvatarFallback>{contact.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+                            </Avatar>
 
                             {/* Content */}
                             <div className="flex-1 min-w-0 text-left space-y-1">
@@ -97,7 +110,7 @@ export default function Sidebar({
                                 <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                                     {contact.lastMessage}
                                 </p>
-                                <p className="text-xs text-muted-foreground flex-shrink-0 whitespace-nowrap">
+                                <p className="text-xs text-muted-foreground shrink-0 whitespace-nowrap">
                                     {contact.timestamp}
                                 </p>
                             </div>

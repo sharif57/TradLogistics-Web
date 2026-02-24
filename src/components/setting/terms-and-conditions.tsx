@@ -59,7 +59,7 @@ export default function AboutUs() {
         )}
       </div>
 
-      <div className="flex justify-end pt-4 gap-4">
+      {/* <div className="flex justify-end pt-4 gap-4">
         {!isEditing ? (
           <Button onClick={handleEditClick} className="bg-[#8FD2FF] hover:bg-[#8FD2FF] text-black">Edit About</Button>
         ) : (
@@ -68,7 +68,7 @@ export default function AboutUs() {
             <Button onClick={handleSave}>Save</Button>
           </>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }

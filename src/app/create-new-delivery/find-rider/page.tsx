@@ -69,6 +69,7 @@ export default function FindingRider() {
         skip: !deliveryId,
         refetchOnMountOrArgChange: true,
     });
+    console.log(data?.estimate_arrival_time,'============>')
 
     const [cancelDelivery] = useCancelDeliveryMutation();
     const [rateDelivery , { isLoading: ratingLoading }] = useRateDeliveryMutation();
@@ -431,7 +432,7 @@ export default function FindingRider() {
             {showMessagePanel && (
                 <div className="absolute inset-0 z-60 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
                     <div className="absolute top-8 right-0 lg:right-8 z-70 w-full lg:w-[542px] bg-white rounded-lg shadow-lg pointer-events-auto">
-                        <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C]">Pickup in 3 min</p>
+                        <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C]">Pickup in {data?.estimate_arrival_time } min</p>
 
                         <div className="flex items-center justify-between p-4">
                             <div className="flex items-center gap-4">
@@ -451,7 +452,7 @@ export default function FindingRider() {
                                 <CarLite />
                                 <span>{driver.vehicleType} - {driver.brand} • {driver.model} • {driver.registration}</span>
                             </div>
-                            <div className="flex items-center gap-2 mt-2 text-lg text-[#4B5563]">
+                            <div onClick={() => window.open(`tel:${driver.phone}`, "_blank")} className="flex cursor-pointer items-center gap-2 mt-2 text-lg text-[#4B5563]">
                                 <Phone />
                                 <span>{driver.phone}</span>
                             </div>
