@@ -97,7 +97,7 @@ export default function Sidebar({
                                 <AvatarImage
                                     src={contact.avatar ? `${IMAGE}${contact.avatar}` : 'https://github.com/shadcn.png'}
                                     alt={contact.name}
-                                    // className="grayscale"
+                                // className="grayscale"
                                 />
                                 <AvatarFallback>{contact.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
                             </Avatar>
@@ -114,6 +114,12 @@ export default function Sidebar({
                                     {contact.timestamp}
                                 </p>
                             </div>
+
+                            {contact.unreadCount > 0 && (
+                                <span className="min-w-5 h-5 px-1 rounded-full bg-primary text-white text-[10px] font-medium flex items-center justify-center">
+                                    {contact.unreadCount > 99 ? '99+' : contact.unreadCount}
+                                </span>
+                            )}
 
                             {/* Timestamp */}
 

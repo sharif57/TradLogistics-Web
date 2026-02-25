@@ -6,11 +6,12 @@
 import CarLite from "@/components/icon/carLite";
 import { useCancelDeliveryMutation, useGetDeliveryQuery, useRateDeliveryMutation } from "@/redux/feature/deliverySlice";
 import { Copy, CopyCheck, MessageCircle, Phone, Send, Star, X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Rating } from 'react-simple-star-rating'
 import { FaSpinner } from "react-icons/fa";
+import { useCreateConversationMutation } from "@/redux/feature/chatSlice";
 
 type LatLng = {
     lat: number;
@@ -51,9 +52,10 @@ const getHeading = (from: LatLng, to: LatLng) => {
     return (rad * 180) / Math.PI;
 };
 
-export default function FindingRider() {
+ function FindingRider() {
     const params = useSearchParams();
     const deliveryId = params.get("deliveryId");
+    const router = useRouter();
     const mapRef = useRef<HTMLDivElement | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -64,15 +66,18 @@ export default function FindingRider() {
     const [rating, setRating] = useState(0);
     const [mapsLoaded, setMapsLoaded] = useState(false);
     const [mapError, setMapError] = useState<string | null>(null);
+    const [conversationPublicId, setConversationPublicId] = useState<string | null>(null);
 
     const { data, isLoading } = useGetDeliveryQuery(deliveryId, {
         skip: !deliveryId,
         refetchOnMountOrArgChange: true,
     });
-    console.log(data?.estimate_arrival_time,'============>')
+    console.log(data?.customer?.user_id, '============>')
+
+    const [createConversation] = useCreateConversationMutation();
 
     const [cancelDelivery] = useCancelDeliveryMutation();
-    const [rateDelivery , { isLoading: ratingLoading }] = useRateDeliveryMutation();
+    const [rateDelivery, { isLoading: ratingLoading }] = useRateDeliveryMutation();
 
     const delivery = ((data as { data?: Record<string, unknown> } | undefined)?.data ?? data) as Record<string, unknown> | undefined;
     const apiDriver = (delivery?.driver as Record<string, unknown> | null | undefined) ?? null;
@@ -117,6 +122,28 @@ export default function FindingRider() {
 
     const loading = !deliveryId || isLoading || !mapsLoaded;
 
+    const updateConversationQuery = (publicId: string) => {
+        const nextParams = new URLSearchParams(params.toString());
+        nextParams.set("conversationId", publicId);
+        const nextQuery = nextParams.toString();
+        router.replace(nextQuery ? `/create-new-delivery/find-rider?${nextQuery}` : "/create-new-delivery/find-rider");
+    };
+
+    const ensureConversation = async () => {
+        if (conversationPublicId) {
+            updateConversationQuery(conversationPublicId);
+            return conversationPublicId;
+        }
+
+        const res = await createConversation({ user_id: data?.driver?.user_id, delivery_id: data?.id }).unwrap();
+        const publicId = String(res.data?.public_id || "");
+        if (publicId) {
+            setConversationPublicId(publicId);
+            updateConversationQuery(publicId);
+        }
+        return publicId;
+    };
+
     // ✅ Helper: close all modals at once
     const closeAllModals = () => {
         setShowModal(false);
@@ -131,6 +158,12 @@ export default function FindingRider() {
         setShowMessagePanel(modal === "message");
         setShowConfirm(modal === "confirm");
         setShowRating(modal === "rating");
+
+        if (modal === "message" && data?.driver?.user_id && data?.id) {
+            ensureConversation().catch(() => {
+                toast.error("Unable to start chat. Please try again.");
+            });
+        }
     };
 
     useEffect(() => {
@@ -302,10 +335,18 @@ export default function FindingRider() {
     const onPointerLeave = () => console.log('Leave');
     const onPointerMove = (value: number, index: number) => console.log(value, index);
 
-    const sendMessage = () => {
+    const handleSendMessage = async (message: string) => {
         if (!message.trim()) return;
-        setMessage("");
-        alert("Message sent to driver (simulated)");
+        try {
+            const publicId = await ensureConversation();
+            if (!publicId) {
+                toast.error("Chat not available for this delivery yet.");
+                return;
+            }
+            router.push(`/inbox?conversationId=${publicId}&text=${encodeURIComponent(message)}`);
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
     };
 
     const confirmCancel = async () => {
@@ -432,7 +473,7 @@ export default function FindingRider() {
             {showMessagePanel && (
                 <div className="absolute inset-0 z-60 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
                     <div className="absolute top-8 right-0 lg:right-8 z-70 w-full lg:w-[542px] bg-white rounded-lg shadow-lg pointer-events-auto">
-                        <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C]">Pickup in {data?.estimate_arrival_time } min</p>
+                        <p className="p-4 text-2xl font-medium text-center text-[#1E1E1C]">Pickup in {data?.estimate_arrival_time} min</p>
 
                         <div className="flex items-center justify-between p-4">
                             <div className="flex items-center gap-4">
@@ -476,7 +517,7 @@ export default function FindingRider() {
                                     className="flex-1 rounded-md border px-3 py-2 text-sm"
                                 />
                                 <button
-                                    onClick={sendMessage}
+                                    onClick={() => handleSendMessage(message)}
                                     className="w-10 h-10 rounded-full bg-linear-to-r from-[#51C7E1] to-[#0776BD] text-white flex items-center justify-center"
                                 >
                                     <Send />
@@ -589,4 +630,8 @@ export default function FindingRider() {
 
         </div>
     );
+}
+
+export default function FindRiderPage() {
+    return <Suspense fallback={<div>Loading...</div>}><FindingRider /></Suspense>;
 }

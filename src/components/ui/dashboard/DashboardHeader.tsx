@@ -5,6 +5,7 @@ import { useUserProfileQuery } from "@/redux/feature/userSlice";
 import { Bell, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
+import Link from "next/link";
 
 export default function DashboardHeader() {
   const pathname = usePathname();
@@ -41,7 +42,7 @@ export default function DashboardHeader() {
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
 
-            <div className="flex items-center gap-3">
+            <Link href="/settings" className="flex items-center gap-3">
 
               <Avatar>
                 <AvatarImage
@@ -55,7 +56,7 @@ export default function DashboardHeader() {
                 <p className="text-sm font-medium text-gray-900">{user?.first_name + " " + user?.last_name || "User"} </p>
                 <p className="text-xs text-gray-500">{user?.role}</p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </header>
