@@ -1,36 +1,43 @@
+'use client';
 import First from "../icon/first";
 import Second from "../icon/second";
 import Third from "../icon/thrid";
 import Four from "../icon/four";
+import { useGetClientDashboardQuery } from "@/redux/feature/deliverySlice";
+import { useState } from "react";
 
-const stats = [
-    {
-        id: 1,
-        label: "Total Deliveries",
-        value: "1,284",
-        icon: <First />,
-    },
-    {
-        id: 2,
-        label: "In Transit",
-        value: "42",
-        icon: <Second />,
-    },
-    {
-        id: 3,
-        label: "Delivered",
-        value: "1,195",
-        icon: <Third/>,
-    },
-    {
-        id: 4,
-        label: "Total Spent",
-        value: "$8,450",
-        icon: <Four />,
-    },
-];
 
 export default function Count() {
+    const { data } = useGetClientDashboardQuery(undefined);
+    const dashboardData = data?.data;
+
+    const stats = [
+        {
+            id: 1,
+            label: "Total Deliveries",
+            value: dashboardData?.total_deliveries || "0",
+            icon: <First />,
+        },
+        {
+            id: 2,
+            label: "In Transit",
+            value: dashboardData?.total_in_transit || "0",
+            icon: <Second />,
+        },
+        {
+            id: 3,
+            label: "Delivered",
+            value: dashboardData?.total_delivered || "0",
+            icon: <Third />,
+        },
+        {
+            id: 4,
+            label: "Total Spent",
+            value: dashboardData?.total_spend ? `$${dashboardData.total_spend}` : "$0",
+            icon: <Four />,
+        },
+    ];
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 ">
             {stats.map((stat) => (

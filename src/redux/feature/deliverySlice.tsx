@@ -1,6 +1,39 @@
 
 import baseApi from "../Api/baseApi";
 
+type DeliveryOverviewItem = {
+    month: number;
+    label: string;
+    value: number;
+    count: number;
+    amount: number;
+};
+
+type ClientDashboardData = {
+    total_deliveries: number;
+    total_pending: number;
+    total_searching: number;
+    total_driver_assigned: number;
+    total_picked_up: number;
+    total_in_transit: number;
+    total_delivered: number;
+    total_cancelled: number;
+    total_spend: number;
+    delivery_overview: {
+        year: number;
+        data: DeliveryOverviewItem[];
+    };
+};
+
+type ClientDashboardResponse = {
+    status: string;
+    data: ClientDashboardData;
+};
+
+type ClientDashboardParams = {
+    year?: number;
+};
+
 export const deliveryApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         //    /order/deliveries/
@@ -68,7 +101,26 @@ export const deliveryApi = baseApi.injectEndpoints({
             invalidatesTags: ["Delivery"],
         }),
 
+        // /order/client/dashboard/
+        getClientDashboard: builder.query<ClientDashboardResponse, ClientDashboardParams | void>({
+            query: (params) => {
+                if (params) {
+                    return {
+                        url: `/order/company/dashboard/`,
+                        method: "GET",
+                        params,
+                    };
+                }
+
+                return {
+                    url: `/order/company/dashboard/`,
+                    method: "GET",
+                };
+            },
+            providesTags: ["Delivery"],
+        }),
+
     }),
 });
 
-export const { useCreateDeliveryMutation, useGetDeliveryQuery, useSearchDriverAndAssignMutation, useCancelDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery, useRateDeliveryMutation } = deliveryApi;
+export const { useCreateDeliveryMutation, useGetDeliveryQuery, useSearchDriverAndAssignMutation, useCancelDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery, useRateDeliveryMutation, useGetClientDashboardQuery } = deliveryApi;
