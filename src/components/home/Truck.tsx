@@ -13,7 +13,7 @@ interface TruckItem {
     public_id: string;
     truck_id: string;
     vehicle_type: string;
-    operating_zone: string;
+    operating_zone_name: string;
     owner: number;
     owner_id: number;
     driver: number | null;
@@ -49,6 +49,7 @@ const formatDate = (date: string) => {
 
 const Truck = ({ title }: { title: string }) => {
     const { data, isLoading, isError } = useCompanyTrucksQuery(undefined);
+    console.log(data?.data, '===================truck list=========')
     const [selectedTruck, setSelectedTruck] = useState<TruckItem | null>(null);
 
     const trucks = useMemo(() => {
@@ -128,7 +129,7 @@ const Truck = ({ title }: { title: string }) => {
                                         className="border-t hover:bg-gray-50 transition"
                                     >
                                         <td className="px-6 py-4 text-center">{item.truck_id || "N/A"}</td>
-                                        <td className="px-6 py-4 text-center">{item.operating_zone || "N/A"}</td>
+                                        <td className="px-6 py-4 text-center">{item.operating_zone_name || "N/A"}</td>
                                         <td className="px-6 py-4 text-center">{item.driver_name || "Not Assigned"}</td>
                                         <td className="px-6 py-4"> <div className="flex items-center justify-center gap-2">
                                             <span
@@ -182,7 +183,7 @@ const Truck = ({ title }: { title: string }) => {
                             </div>
                             <div>
                                 <p className="text-gray-500">Operating Zone</p>
-                                <p className="font-medium">{selectedTruck.operating_zone || "N/A"}</p>
+                                <p className="font-medium">{selectedTruck.operating_zone_name || "N/A"}</p>
                             </div>
                             <div>
                                 <p className="text-gray-500">Driver</p>

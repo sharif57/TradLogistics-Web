@@ -3,6 +3,15 @@ import baseApi from "@/redux/Api/baseApi";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    createTruck: builder.mutation({
+      query: (data) => ({
+        url: "/company/trucks/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Company"],
+    }),
+
     companyList: builder.query({
       query: () => ({
         url: "/company/trucks/",
@@ -32,4 +41,4 @@ export const userApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useCompanyListQuery, useCompanyTrucksQuery , useAllDriverListQuery } = userApi;
+export const { useCreateTruckMutation, useCompanyListQuery, useCompanyTrucksQuery, useAllDriverListQuery } = userApi;

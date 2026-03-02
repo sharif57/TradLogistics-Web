@@ -1,15 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, AlertCircle, CheckCircle, Loader } from 'lucide-react'
+import { ArrowLeft, AlertCircle, Loader } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Label } from '@/components/ui/label'
-
-// Validation functions
-const validateTruckId = (id: string): boolean => {
-    const truckIdRegex = /^[A-Z]{3}-[A-Z0-9]{3,}$/
-    return truckIdRegex.test(id.toUpperCase())
-}
+import { toast } from 'sonner'
+import { useAllZoneListQuery } from '@/redux/feature/gasCompany/zoneSlice'
+import { useAllDriverListQuery, useCreateTruckMutation } from '@/redux/feature/gasCompany/companySlice'
 
 const validateInventory = (value: string): boolean => {
     const num = parseInt(value)
@@ -21,7 +18,6 @@ interface FormErrors {
 }
 
 interface FormData {
-    fromAddress: string
     vehicleType: string
     operatingZone: string
     assignDriver: string
@@ -32,7 +28,6 @@ interface FormData {
 export default function AddTrack() {
     const router = useRouter()
     const [formData, setFormData] = useState<FormData>({
-        fromAddress: '',
         vehicleType: '',
         operatingZone: '',
         assignDriver: '',
@@ -40,9 +35,15 @@ export default function AddTrack() {
         cylinder25kg: '',
     })
 
+    const { data } = useAllZoneListQuery(undefined);
+    const { data: driverData } = useAllDriverListQuery('driver');
+    const [createTruck] = useCreateTruckMutation();
+
+    const zones = ((data as { data?: Array<{ id: number; name: string; is_active: boolean }> })?.data || []).filter((zone) => zone.is_active)
+    const drivers = (driverData as { data?: Array<{ user_id: number; first_name?: string; last_name?: string; phone?: string; role?: string }> } | undefined)?.data || []
+
     const [errors, setErrors] = useState<FormErrors>({})
     const [loading, setLoading] = useState(false)
-    const [successMessage, setSuccessMessage] = useState('')
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -62,13 +63,6 @@ export default function AddTrack() {
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {}
-
-        // Truck ID validation
-        if (!formData.fromAddress.trim()) {
-            newErrors.fromAddress = 'Truck ID is required'
-        } else if (!validateTruckId(formData.fromAddress)) {
-            newErrors.fromAddress = 'Invalid truck ID format (use format like: ABC-123)'
-        }
 
         // Vehicle Type validation
         if (!formData.vehicleType.trim()) {
@@ -110,41 +104,33 @@ export default function AddTrack() {
         }
 
         setLoading(true)
-        setSuccessMessage('')
+        setErrors({})
 
         try {
-            // Simulate API call
-            await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        success: true,
-                        message: 'Truck added successfully!',
-                        truckId: formData.fromAddress
-                    })
-                }, 2000)
-            })
+            const payload = {
+                vehicle_type: formData.vehicleType,
+                operating_zone: Number(formData.operatingZone),
+                driver: formData.assignDriver ? Number(formData.assignDriver) : '',
+                cylinder_12kg: Number(formData.cylinder12kg),
+                cylinder_25kg: Number(formData.cylinder25kg),
+            }
 
-            console.log('Form submitted:', formData)
-            setSuccessMessage('Truck added successfully! Redirecting...')
-
-            // Reset form
-            setFormData({
-                fromAddress: '',
-                vehicleType: '',
-                operatingZone: '',
-                assignDriver: '',
-                cylinder12kg: '',
-                cylinder25kg: '',
-            })
+            await createTruck(payload).unwrap()
+            toast.success('Truck added successfully! Redirecting...')
 
             // Redirect after 2 seconds
-            setTimeout(() => {
-                router.push('/fleet-drivers')
-            }, 2000)
+            router.push('/fleet-drivers')
 
-        } catch (error) {
-            setErrors({ submit: 'Failed to add truck. Please try again.' })
-            console.error('Error:', error)
+        } catch (error: any) {
+            const apiData = error?.data
+            const backendMessage =
+                apiData?.message ||
+                apiData?.detail ||
+                (typeof apiData === 'string' ? apiData : '')
+
+            const submitMessage = backendMessage || 'Failed to add truck. Please try again.'
+            setErrors({ submit: submitMessage })
+            toast.error(submitMessage)
         } finally {
             setLoading(false)
         }
@@ -161,44 +147,10 @@ export default function AddTrack() {
                     <h1 className="text-lg sm:text-xl font-medium text-[#1E1E1C]">Add New Truck</h1>
                 </div>
 
-                {/* Success Message */}
-                {successMessage && (
-                    <div className="mx-4 sm:mx-6 mt-4 flex items-center gap-3 p-4 bg-green-50 border border-green-300 rounded-lg">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                        <p className="text-green-800">{successMessage}</p>
-                    </div>
-                )}
 
-                {/* Error Message */}
-                {errors.submit && (
-                    <div className="mx-4 sm:mx-6 mt-4 flex items-center gap-3 p-4 bg-red-50 border border-red-300 rounded-lg">
-                        <AlertCircle className="w-5 h-5 text-red-600" />
-                        <p className="text-red-800">{errors.submit}</p>
-                    </div>
-                )}
 
                 {/* Form Content */}
                 <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-6 space-y-4">
-
-                    {/* Truck ID */}
-                    <div>
-                        <Label htmlFor="fromAddress" className='text-[#0F172A] text-lg font-medium mb-2'>Truck ID</Label>
-                        <input
-                            type="text"
-                            id="fromAddress"
-                            name="fromAddress"
-                            value={formData.fromAddress}
-                            onChange={handleInputChange}
-                            placeholder="e.g. TRK-A12"
-                            className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.fromAddress ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-                                }`}
-                        />
-                        {errors.fromAddress && (
-                            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                                <AlertCircle className="w-4 h-4" /> {errors.fromAddress}
-                            </p>
-                        )}
-                    </div>
 
                     {/* Vehicle Type */}
                     <div>
@@ -218,9 +170,9 @@ export default function AddTrack() {
                             }}
                         >
                             <option value="">Select vehicle type</option>
-                            <option value="small">Small Pickup</option>
-                            <option value="medium">Medium Truck</option>
-                            <option value="large">Large Truck</option>
+                            <option value="small_pickup">Small Pickup</option>
+                            <option value="medium_truck">Medium Truck</option>
+                            <option value="large_truck">Large Truck</option>
                         </select>
                         {errors.vehicleType && (
                             <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
@@ -247,10 +199,9 @@ export default function AddTrack() {
                             }}
                         >
                             <option value="">Select delivery zone</option>
-                            <option value="dhaka-north">Dhaka North</option>
-                            <option value="dhaka-south">Dhaka South</option>
-                            <option value="dhaka-east">Dhaka East</option>
-                            <option value="dhaka-west">Dhaka West</option>
+                            {zones.map((zone) => (
+                                <option key={zone.id} value={zone.id}>{zone.name}</option>
+                            ))}
                         </select>
                         {errors.operatingZone && (
                             <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
@@ -276,9 +227,13 @@ export default function AddTrack() {
                             }}
                         >
                             <option value="">You can assign a driver now or later</option>
-                            <option value="driver-1">Driver 1 - Ahmed Khan</option>
-                            <option value="driver-2">Driver 2 - Md. Hassan</option>
-                            <option value="driver-3">Driver 3 - Karim Ali</option>
+                            {drivers.map((driver) => (
+                                <option key={driver.user_id} value={driver.user_id}>
+                                    {driver.first_name || driver.last_name
+                                        ? `${driver.first_name || ''} ${driver.last_name || ''}`.trim()
+                                        : `Driver #${driver.user_id}`} ({driver.phone || 'No phone'})
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -337,8 +292,8 @@ export default function AddTrack() {
                         type="submit"
                         disabled={loading}
                         className={`w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base flex items-center justify-center gap-2 ${loading
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-l from-[#0776BD] to-[#51C7E1] hover:shadow-lg'
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-linear-to-l from-[#0776BD] to-[#51C7E1] hover:shadow-lg'
                             }`}
                     >
                         {loading && <Loader className="w-4 h-4 animate-spin" />}

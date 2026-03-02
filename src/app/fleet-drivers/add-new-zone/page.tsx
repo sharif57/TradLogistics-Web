@@ -198,7 +198,7 @@ export default function AddZone() {
                                 type="text"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                placeholder="e.g. Savar Zone"
+                                placeholder="Enter zone name"
                                 className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                             />
                             {errors.name && (
