@@ -4,24 +4,20 @@ import Count from "@/components/home/count";
 import GasCounter from "@/components/home/gasCounter";
 import MapComponent from "@/components/home/MapComponent";
 import RecentDeliveriesTable from "@/components/home/table";
+import { useUserProfileQuery } from "@/redux/feature/userSlice";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function Home() {
+  const { data } = useUserProfileQuery(undefined);
+  const isGasCompany = data?.data?.business_type === "gas_company";
 
-  const [role, setRole] = useState<string | null>(null);
 
-  useEffect(() => {
-    const userRole = localStorage.getItem("businessType");
-    setRole(userRole);
-  }, []);
-  console.log(role)
 
   return (
     <div className="space-y-8 mt-6 py-4 px-4 md:px-6 lg:px-8">
       {
-        role === 'gas' ? (
+        isGasCompany ? (
           <>
 
             <GasCounter />

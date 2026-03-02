@@ -3,7 +3,7 @@
 
 'use client';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Settings,
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdOutlineSupportAgent, MdPayment } from "react-icons/md";
+import { useUserProfileQuery } from "@/redux/feature/userSlice";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
@@ -36,13 +37,19 @@ const gasCompanyMenuItems = [
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
+const businessTypeMenuMap = {
+  ecommerce: menuItems,
+  gas_company: gasCompanyMenuItems,
+} as const;
+
 export default function DashboardSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [role] = useState<string>(
-    typeof window !== "undefined" ? localStorage.getItem("businessType") || "" : ""
-  );
+
+
+  const { data } = useUserProfileQuery(undefined);
+  console.log(data?.data)
 
   // Hide sidebar on auth pages
   if (
@@ -65,7 +72,8 @@ export default function DashboardSidebar() {
     router.push("/auth/login");
   };
 
-  const activeMenuItems = role === "gas_company" ? gasCompanyMenuItems : menuItems;
+  const businessType = data?.data?.business_type as keyof typeof businessTypeMenuMap | undefined;
+  const activeMenuItems = businessType ? businessTypeMenuMap[businessType] ?? menuItems : menuItems;
 
   return (
     <>

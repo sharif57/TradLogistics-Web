@@ -21,10 +21,11 @@ export default function SignInPage() {
     e.preventDefault()
     try {
       const response = await login({
-       phone: email,
+        phone: email,
         password
       }).unwrap();
       localStorage.setItem('accessToken', response.access_token);
+      localStorage.setItem('businessType', response.business_type);
       await saveTokens(response.access_token);
       toast.success(response.message || 'Login successful!');
       router.push('/')
@@ -33,7 +34,7 @@ export default function SignInPage() {
       console.error('Login error:', error);
     }
   }
-         
+
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-7xl">
