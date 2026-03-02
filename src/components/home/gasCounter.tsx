@@ -1,16 +1,9 @@
-// import React from 'react'
 
-// export default function gasCounter() {
-//   return (
-//     <div>
-      
-//     </div>
-//   )
-// }
 import First from "../icon/first";
 import Second from "../icon/second";
 import Third from "../icon/thrid";
 import Doller from "../icon/doller";
+import { useGetClientDashboardQuery } from "@/redux/feature/deliverySlice";
 
 const stats = [
     {
@@ -40,6 +33,10 @@ const stats = [
 ];
 
 export default function GasCounter() {
+
+    const {data} = useGetClientDashboardQuery(undefined);
+    console.log(data, '======gas')
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 ">
             {stats.map((stat) => (

@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { driverData } from "../mockData/driverData";
 import Ratting from "../icon/ratting";
+import { useAllDriverListQuery } from "@/redux/feature/gasCompany/companySlice";
+import { useState } from "react";
 
 
 const Driver = ({ title }: { title: string }) => {
-
-
+    const [role , setRole] = useState('driver');
+    const {data} = useAllDriverListQuery(role);
+    console.log(data, 'driver list')
     const statusColor = {
         "On Delivery": "bg-yellow-400",
         Available: "bg-green-500",

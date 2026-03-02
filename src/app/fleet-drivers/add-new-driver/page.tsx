@@ -1,9 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, AlertCircle, CheckCircle, Loader } from 'lucide-react'
+import { ArrowLeft, AlertCircle, Eye, EyeOff, Loader } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Label } from '@/components/ui/label'
+import { useRegisterMutation } from '@/redux/feature/authSlice'
+import { useCompanyListQuery } from '@/redux/feature/gasCompany/companySlice'
+import { toast } from 'sonner'
 
 // Validation functions
 const validateEmail = (email: string): boolean => {
@@ -20,18 +23,11 @@ const validatePassword = (password: string): { isValid: boolean; strength: strin
     if (password.length < 8) {
         return { isValid: false, strength: 'Too short (min 8 characters)' }
     }
-    if (!/[A-Z]/.test(password)) {
-        return { isValid: false, strength: 'Missing uppercase letter' }
-    }
-    if (!/[a-z]/.test(password)) {
-        return { isValid: false, strength: 'Missing lowercase letter' }
-    }
+
     if (!/[0-9]/.test(password)) {
         return { isValid: false, strength: 'Missing number' }
     }
-    if (!/[!@#$%^&*]/.test(password)) {
-        return { isValid: false, strength: 'Missing special character (!@#$%^&*)' }
-    }
+
     return { isValid: true, strength: 'Strong' }
 }
 
@@ -39,30 +35,49 @@ const validateDriverLicense = (license: string): boolean => {
     return license.length >= 5 && /^[A-Za-z0-9]+$/.test(license)
 }
 
-const validateDriverId = (id: string): boolean => {
-    return id.length >= 3 && /^[A-Za-z0-9]+$/.test(id)
-}
-
 interface FormErrors {
     [key: string]: string
+}
+
+const fieldKeyMap: Record<string, string> = {
+    phone: 'phoneNumber',
+    first_name: 'driverFirstName',
+    last_name: 'driverLastName',
+    driving_license_number: 'drivingLicense',
+    assign_truck: 'assignTruck',
+    email: 'email',
+    password: 'password',
+}
+
+const normalizeBackendMessage = (message: string): string => {
+    if (/phone/i.test(message) && /already exists/i.test(message)) {
+        return 'This phone number is already registered.'
+    }
+    return message
 }
 
 export default function AddTrack() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        driverName: '',
+        driverFirstName: '',
+        driverLastName: '',
         phoneNumber: '',
         password: '',
         email: '',
-        driverId: '',
         drivingLicense: '',
         assignTruck: '',
     })
 
     const [errors, setErrors] = useState<FormErrors>({})
     const [loading, setLoading] = useState(false)
-    const [successMessage, setSuccessMessage] = useState('')
     const [passwordStrength, setPasswordStrength] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
+
+    const { data: companyData } = useCompanyListQuery(undefined);
+    const trucks = companyData?.data || [];
+
+
+    const [createDriver] = useRegisterMutation();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -89,11 +104,14 @@ export default function AddTrack() {
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {}
 
-        // Driver Name validation
-        if (!formData.driverName.trim()) {
-            newErrors.driverName = 'Driver name is required'
-        } else if (formData.driverName.length < 3) {
-            newErrors.driverName = 'Driver name must be at least 3 characters'
+        // Driver First Name validation
+        if (!formData.driverFirstName.trim()) {
+            newErrors.driverFirstName = 'Driver first name is required'
+        }
+
+        // Driver Last Name validation
+        if (!formData.driverLastName.trim()) {
+            newErrors.driverLastName = 'Driver last name is required'
         }
 
         // Phone Number validation
@@ -118,13 +136,6 @@ export default function AddTrack() {
             newErrors.email = 'Enter a valid email address'
         }
 
-        // Driver ID validation
-        if (!formData.driverId.trim()) {
-            newErrors.driverId = 'Driver ID is required'
-        } else if (!validateDriverId(formData.driverId)) {
-            newErrors.driverId = 'Driver ID must be alphanumeric and at least 3 characters'
-        }
-
         // Driving License validation
         if (!formData.drivingLicense.trim()) {
             newErrors.drivingLicense = 'Driving license number is required'
@@ -144,43 +155,63 @@ export default function AddTrack() {
         }
 
         setLoading(true)
-        setSuccessMessage('')
+        setErrors({})
 
         try {
-            // Simulate API call
-            const response = await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        success: true,
-                        message: 'Driver added successfully!',
-                        driverId: formData.driverId
-                    })
-                }, 2000)
-            })
+            const payload = {
+                d_type: 'gas',
+                first_name: formData.driverFirstName.trim(),
+                last_name: formData.driverLastName.trim(),
+                email: formData.email.trim(),
+                phone: formData.phoneNumber.trim(),
+                driving_license_number: formData.drivingLicense.trim(),
+                role: 'driver',
+                password: formData.password,
+                assign_truck: formData.assignTruck || null,
+            }
 
-            console.log('Form submitted:', formData)
-            setSuccessMessage('Driver added successfully! Redirecting...')
+            await createDriver(payload).unwrap()
+            toast.success('Driver added successfully! Redirecting...')
 
-            // Reset form
-            setFormData({
-                driverName: '',
-                phoneNumber: '',
-                password: '',
-                email: '',
-                driverId: '',
-                drivingLicense: '',
-                assignTruck: '',
-            })
             setPasswordStrength('')
+            setErrors({})
 
             // Redirect after 2 seconds
             setTimeout(() => {
                 router.push('/fleet-drivers')
             }, 2000)
 
-        } catch (error) {
-            setErrors({ submit: 'Failed to add driver. Please try again.' })
-            console.error('Error:', error)
+        } catch (error: any) {
+            const apiData = error?.data
+            const message =
+                apiData?.message ||
+                apiData?.detail ||
+                (typeof apiData === 'string' ? apiData : '')
+
+            const backendFieldErrors: FormErrors = {}
+
+            if (apiData && typeof apiData === 'object') {
+                Object.entries(apiData).forEach(([key, value]) => {
+                    if (key === 'status' || key === 'message' || key === 'detail') return
+                    const fieldName = fieldKeyMap[key] || key
+                    const valueText = Array.isArray(value) ? String(value[0]) : String(value)
+                    backendFieldErrors[fieldName] = normalizeBackendMessage(valueText)
+                })
+            }
+
+            if (message && /phone/i.test(message) && /already exists/i.test(message)) {
+                backendFieldErrors.phoneNumber = 'This phone number is already registered.'
+            }
+
+            const submitMessage =
+                Object.values(backendFieldErrors)[0] ||
+                (message ? normalizeBackendMessage(message) : 'Failed to add driver. Please try again.')
+
+            toast.error(submitMessage)
+            setErrors({
+                ...backendFieldErrors,
+                submit: submitMessage,
+            })
         } finally {
             setLoading(false)
         }
@@ -197,43 +228,48 @@ export default function AddTrack() {
                     <h1 className="text-lg sm:text-xl font-medium text-[#1E1E1C]">Add New Driver</h1>
                 </div>
 
-                {/* Success Message */}
-                {successMessage && (
-                    <div className="mx-4 sm:mx-6 mt-4 flex items-center gap-3 p-4 bg-green-50 border border-green-300 rounded-lg">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                        <p className="text-green-800">{successMessage}</p>
-                    </div>
-                )}
-
-                {/* Error Message */}
-                {errors.submit && (
-                    <div className="mx-4 sm:mx-6 mt-4 flex items-center gap-3 p-4 bg-red-50 border border-red-300 rounded-lg">
-                        <AlertCircle className="w-5 h-5 text-red-600" />
-                        <p className="text-red-800">{errors.submit}</p>
-                    </div>
-                )}
 
                 {/* Form Content */}
                 <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-6 space-y-4">
 
                     {/* Driver Name */}
-                    <div>
-                        <Label htmlFor="driverName" className='text-[#0F172A] text-lg font-medium mb-2'>Driver Name</Label>
-                        <input
-                            type="text"
-                            id="driverName"
-                            name="driverName"
-                            value={formData.driverName}
-                            onChange={handleInputChange}
-                            placeholder="Enter driver name"
-                            className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.driverName ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-                                }`}
-                        />
-                        {errors.driverName && (
-                            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                                <AlertCircle className="w-4 h-4" /> {errors.driverName}
-                            </p>
-                        )}
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div>
+                            <Label htmlFor="driverFirstName" className='text-[#0F172A] text-lg font-medium mb-2'>First Name</Label>
+                            <input
+                                type="text"
+                                id="driverFirstName"
+                                name="driverFirstName"
+                                value={formData.driverFirstName}
+                                onChange={handleInputChange}
+                                placeholder="Enter driver first name"
+                                className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.driverFirstName ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                                    }`}
+                            />
+                            {errors.driverFirstName && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                    <AlertCircle className="w-4 h-4" /> {errors.driverFirstName}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <Label htmlFor="driverLastName" className='text-[#0F172A] text-lg font-medium mb-2'>Last Name</Label>
+                            <input
+                                type="text"
+                                id="driverLastName"
+                                name="driverLastName"
+                                value={formData.driverLastName}
+                                onChange={handleInputChange}
+                                placeholder="Enter driver last name"
+                                className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.driverLastName ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                                    }`}
+                            />
+                            {errors.driverLastName && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                    <AlertCircle className="w-4 h-4" /> {errors.driverLastName}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     {/* Phone Number */}
@@ -259,16 +295,26 @@ export default function AddTrack() {
                     {/* Password */}
                     <div>
                         <Label htmlFor="password" className='text-[#0F172A] text-lg font-medium mb-2'>Create Password for Driver</Label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="Create password"
-                            className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-                                }`}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                placeholder="Create password"
+                                className={`w-full px-4 py-3 pr-12 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700"
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
                         {passwordStrength && !errors.password && (
                             <p className="text-green-600 text-sm mt-1">✓ {passwordStrength}</p>
                         )}
@@ -300,26 +346,6 @@ export default function AddTrack() {
                         {errors.email && (
                             <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
                                 <AlertCircle className="w-4 h-4" /> {errors.email}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Driver ID */}
-                    <div>
-                        <Label htmlFor="driverId" className='text-[#0F172A] text-lg font-medium mb-2'>Driver ID</Label>
-                        <input
-                            type="text"
-                            id="driverId"
-                            name="driverId"
-                            value={formData.driverId}
-                            onChange={handleInputChange}
-                            placeholder="Enter driver id"
-                            className={`w-full px-4 py-3 border bg-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-gray-400 text-sm sm:text-base ${errors.driverId ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-                                }`}
-                        />
-                        {errors.driverId && (
-                            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                                <AlertCircle className="w-4 h-4" /> {errors.driverId}
                             </p>
                         )}
                     </div>
@@ -360,9 +386,12 @@ export default function AddTrack() {
                             }}
                         >
                             <option value="">Select truck (optional)</option>
-                            <option value="small">Small Pickup</option>
-                            <option value="medium">Medium Truck</option>
-                            <option value="large">Large Truck</option>
+                            {
+                                trucks.map((truck: any) => (
+                                    <option key={truck?.public_id} value={truck?.public_id}>{truck?.truck_id} ({truck?.vehicle_type})</option>
+                                ))
+                            }
+
                         </select>
                     </div>
 
@@ -371,8 +400,8 @@ export default function AddTrack() {
                         type="submit"
                         disabled={loading}
                         className={`w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm sm:text-base flex items-center justify-center gap-2 ${loading
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-l from-[#0776BD] to-[#51C7E1] hover:shadow-lg'
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-gradient-to-l from-[#0776BD] to-[#51C7E1] hover:shadow-lg'
                             }`}
                     >
                         {loading && <Loader className="w-4 h-4 animate-spin" />}
