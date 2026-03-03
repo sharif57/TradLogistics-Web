@@ -18,6 +18,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdOutlineSupportAgent, MdPayment } from "react-icons/md";
 import { useUserProfileQuery } from "@/redux/feature/userSlice";
+import { logout } from "@/service/authService";
+import { toast } from "sonner";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
@@ -49,7 +51,6 @@ export default function DashboardSidebar() {
 
 
   const { data } = useUserProfileQuery(undefined);
-  console.log(data?.data)
 
   // Hide sidebar on auth pages
   if (
@@ -67,9 +68,15 @@ export default function DashboardSidebar() {
     return null;
   }
 
-  const handleLogout = () => {
-    // localStorage.removeItem("authToken"); // uncomment when ready
-    router.push("/auth/login");
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("accessToken");
+      await logout();
+      toast.success("Logged out successfully");
+      router.push("/auth/login");
+    } catch (error) {
+      toast.error("Error logging out");
+    }
   };
 
   const businessType = data?.data?.business_type as keyof typeof businessTypeMenuMap | undefined;

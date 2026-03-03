@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { useRegisterMutation } from '@/redux/feature/authSlice'
 import { useCompanyListQuery } from '@/redux/feature/gasCompany/companySlice'
 import { toast } from 'sonner'
+import { useUserProfileQuery } from '@/redux/feature/userSlice'
 
 // Validation functions
 const validateEmail = (email: string): boolean => {
@@ -76,6 +77,8 @@ export default function AddTrack() {
     const { data: companyData } = useCompanyListQuery(undefined);
     const trucks = companyData?.data || [];
 
+    const {data: userData} = useUserProfileQuery(undefined);
+    const userId = userData?.data?.user_id;
 
     const [createDriver] = useRegisterMutation();
 
@@ -164,22 +167,23 @@ export default function AddTrack() {
                 last_name: formData.driverLastName.trim(),
                 email: formData.email.trim(),
                 phone: formData.phoneNumber.trim(),
+                driver_company: Number(userId),
                 driving_license_number: formData.drivingLicense.trim(),
                 role: 'driver',
                 password: formData.password,
-                assign_truck: formData.assignTruck || null,
+                assign_truck: Number(formData.assignTruck) || null,
             }
 
-            await createDriver(payload).unwrap()
-            toast.success('Driver added successfully! Redirecting...')
+            const res = await createDriver(payload).unwrap()
+            toast.success(res?.message || 'Driver added successfully! Redirecting...')
 
             setPasswordStrength('')
             setErrors({})
 
             // Redirect after 2 seconds
-            setTimeout(() => {
+            // setTimeout(() => {
                 router.push('/fleet-drivers')
-            }, 2000)
+            // }, 2000)
 
         } catch (error: any) {
             const apiData = error?.data
@@ -388,7 +392,7 @@ export default function AddTrack() {
                             <option value="">Select truck (optional)</option>
                             {
                                 trucks.map((truck: any) => (
-                                    <option key={truck?.public_id} value={truck?.public_id}>{truck?.truck_id} ({truck?.vehicle_type})</option>
+                                    <option key={truck?.id} value={truck?.id}>{truck?.id} ({truck?.vehicle_type})</option>
                                 ))
                             }
 
