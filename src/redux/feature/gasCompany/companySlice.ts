@@ -36,9 +36,26 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+    // /order/deliveries/
+    createDeliveryOrder: builder.mutation({
+      query: (data) => ({
+        url: "/order/deliveries/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Delivery"],
+    }),
+
+    getDeliveryOrders: builder.query({
+      query: () => ({
+        url: "/order/deliveries/",
+        method: "GET",
+      }),
+      providesTags: ["Delivery"],
+    }),
 
 
   }),
 });
 
-export const { useCreateTruckMutation, useCompanyListQuery, useCompanyTrucksQuery, useAllDriverListQuery } = userApi;
+export const { useCreateTruckMutation, useCompanyListQuery, useCompanyTrucksQuery, useAllDriverListQuery, useCreateDeliveryOrderMutation, useGetDeliveryOrdersQuery } = userApi;

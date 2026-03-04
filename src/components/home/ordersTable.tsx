@@ -4,10 +4,13 @@ import Link from "next/link";
 import { inventoryData } from "../mockData/inventoryData";
 import SearchInput from "./SearchInput";
 import { useState } from "react";
+import { useGetDeliveryOrdersQuery } from "@/redux/feature/gasCompany/companySlice";
 
 
 const OrdersTable = ({ title }: { title: string }) => {
 
+    const {data} = useGetDeliveryOrdersQuery(undefined);
+    console.log(data?.data)
 
     const [searchValue, setSearchValue] = useState("");
     const placeholders = [

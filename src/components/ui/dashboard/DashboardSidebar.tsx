@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Settings,
   BarChart3,
+  CarFront,
   Menu,
   X,
   LogOut,
@@ -20,6 +21,10 @@ import { MdOutlineSupportAgent, MdPayment } from "react-icons/md";
 import { useUserProfileQuery } from "@/redux/feature/userSlice";
 import { logout } from "@/service/authService";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import Box from "@/components/icon/sidebar/box";
+import Car from "@/components/icon/sidebar/car";
+import Order from "@/components/icon/sidebar/order";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
@@ -32,9 +37,9 @@ const menuItems = [
 
 const gasCompanyMenuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: BarChart3, label: "Fleet & Drivers", href: "/fleet-drivers" },
-  { icon: MdPayment, label: "Inventory", href: "/inventory" },
-  { icon: Inbox, label: "Orders", href: "/orders" },
+  { icon: Car, label: "Fleet & Drivers", href: "/fleet-drivers" },
+  { icon: Box, label: "Inventory", href: "/inventory" },
+  { icon: Order, label: "Orders", href: "/orders" },
   { icon: Settings, label: "Payments", href: "/payments" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
@@ -99,7 +104,7 @@ export default function DashboardSidebar() {
       >
         {/* Logo + close btn (mobile) */}
         <div>
-          <div className="flex items-center justify-between lg:justify-center p-6">
+          <div className="flex items-center justify-between lg:justify-center p-6 mt-8">
             <Image src="/image/logo.png" alt="Logo" width={120} height={50} priority />
             <button
               onClick={() => setIsOpen(false)}
@@ -110,24 +115,39 @@ export default function DashboardSidebar() {
             </button>
           </div>
 
-          <nav className="mt-6 space-y-1 px-3">
+          <nav className="mt-6 space-y-2 px-3">
             {activeMenuItems.map((item) => {
               const Icon = item.icon;
               // Highlight if exact match OR if we're inside that section
               const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
+              const itemClassName = cn(
+                "group relative isolate overflow-hidden flex items-center gap-3.5 rounded-xl px-5 py-3 text-sm font-medium",
+                "transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                isActive
+                  ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white shadow-sm"
+                  : "text-gray-700 hover:text-primary"
+              );
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-4 px-6 py-3 rounded-lg transition font-medium ${isActive
-                    ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white"
-                    : "text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
-                    }`}
+                  className={itemClassName}
                   onClick={() => setIsOpen(false)}
                 >
-                  <Icon size={20} />
-                  <span>{item.label}</span>
+                  {!isActive ? (
+                    <>
+                      <span className="absolute inset-0 -z-10 -translate-x-full bg-primary/10 transition-transform duration-300 ease-out group-hover:translate-x-0" />
+                      <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-primary/70 origin-center scale-y-0 transition-transform duration-200 ease-out group-hover:scale-y-100" />
+                    </>
+                  ) : (
+                    <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-white/80" />
+                  )}
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                    <Icon size={20} />
+                  </span>
+                  <span className="transition-transform text-lg font-normal duration-200 group-hover:translate-x-0.5">{item.label}</span>
                 </Link>
               );
             })}

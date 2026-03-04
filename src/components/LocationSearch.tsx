@@ -96,7 +96,6 @@ export default function LocationSearch({
             const request: any = {
                 input,
                 sessionToken: sessionToken.current,
-                componentRestrictions: { country: 'bd' },
                 types: ['geocode'],
             }
 
