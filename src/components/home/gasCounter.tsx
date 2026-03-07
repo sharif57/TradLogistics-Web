@@ -11,7 +11,6 @@ import { useDashboardQuery } from "@/redux/feature/gasCompany/dashboardSlice";
 export default function GasCounter() {
 
     const { data } = useDashboardQuery(undefined);
-    console.log(data?.data, '======gas')
 
     const counterData = data?.data
 

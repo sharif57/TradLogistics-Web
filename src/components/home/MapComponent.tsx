@@ -14,6 +14,7 @@ import {
 import { Loader2, Clock, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useDashboardQuery } from "@/redux/feature/gasCompany/dashboardSlice";
 
 const start = { name: "Amsterdam", lng: 4.9041, lat: 52.3676 };
 const end = { name: "Rotterdam", lng: 4.4777, lat: 51.9244 };
@@ -36,32 +37,39 @@ function formatDistance(meters: number): string {
     if (meters < 1000) return `${Math.round(meters)} m`;
     return `${(meters / 1000).toFixed(1)} km`;
 }
-const stats = [
-    {
-        id: 1,
-        label: "Online",
-        value: "18 Drivers",
-        icon: <Wifi />,
-    },
-    {
-        id: 2,
-        label: "On Delivery",
-        value: "12 Drivers",
-        icon: <Track />,
-    },
-    {
-        id: 3,
-        label: "Offline",
-        value: "5 Drivers",
-        icon: <Offline />,
-    },
-];
 
 export default function MapComponent() {
 
     const [routes, setRoutes] = useState<RouteData[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+
+    const { data } = useDashboardQuery(undefined);
+
+    const counterData = data?.data
+    console.log(counterData?.drivers,'==========!')
+
+    const stats = [
+    {
+        id: 1,
+        label: "Online",
+        value: `${counterData?.drivers?.online || 0} Drivers`,
+        icon: <Wifi />,
+    },
+    {
+        id: 2,
+        label: "On Delivery",
+        value: `${counterData?.drivers?.on_delivery || 0} Drivers`,
+        icon: <Track />,
+    },
+    {
+        id: 3,
+        label: "Offline",
+        value: `${counterData?.drivers?.offline || 0} Drivers`,
+        icon: <Offline />,
+    },
+];
+
 
     useEffect(() => {
         async function fetchRoutes() {
