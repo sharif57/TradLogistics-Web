@@ -4,38 +4,43 @@ import Second from "../icon/second";
 import Third from "../icon/thrid";
 import Doller from "../icon/doller";
 import { useGetClientDashboardQuery } from "@/redux/feature/deliverySlice";
+import { useDashboardQuery } from "@/redux/feature/gasCompany/dashboardSlice";
 
-const stats = [
-    {
-        id: 1,
-        label: "Total Orders (Today)",
-        value: "84",
-        icon: <First />,
-    },
-    {
-        id: 2,
-        label: "In Transit",
-        value: "42",
-        icon: <Second />,
-    },
-    {
-        id: 3,
-        label: "Completed Deliveries",
-        value: "95",
-        icon: <Third/>,
-    },
-    {
-        id: 4,
-        label: "Revenue (Today)",
-        value: "$8,450",
-        icon: <Doller />,
-    },
-];
+
 
 export default function GasCounter() {
 
-    const {data} = useGetClientDashboardQuery(undefined);
-    console.log(data, '======gas')
+    const { data } = useDashboardQuery(undefined);
+    console.log(data?.data, '======gas')
+
+    const counterData = data?.data
+
+    const stats = [
+        {
+            id: 1,
+            label: "Total Orders (Today)",
+            value: counterData?.today_total_order || "0",
+            icon: <First />,
+        },
+        {
+            id: 2,
+            label: "In Transit",
+            value: counterData?.in_transit || "0",
+            icon: <Second />,
+        },
+        {
+            id: 3,
+            label: "Completed Deliveries",
+            value: counterData?.completed_deliveries || "0",
+            icon: <Third />,
+        },
+        {
+            id: 4,
+            label: "Revenue (Today)",
+            value: `$${counterData?.today_total_revenue}`,
+            icon: <Doller />,
+        },
+    ];
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 ">

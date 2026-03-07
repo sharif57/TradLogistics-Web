@@ -38,12 +38,13 @@ const OrdersTable = ({ title }: { title: string }) => {
                         <thead className="bg-primary text-white">
                             <tr>
                                 {[
-                                    "Truck ID",
+                                    "Order ID",
+                                    "Customer",
                                     "Zone",
-                                    "12 kg (Full)",
-                                    "25 kg (Full)",
-                                    "Empty Cylinders",
+                                    "Cylinder",
+                                    "Driver",
                                     "Status",
+                                    "Payment"
                                 ].map((key) => (
                                     <th
                                         key={key}
@@ -77,6 +78,7 @@ const OrdersTable = ({ title }: { title: string }) => {
                                         className="border-t hover:bg-gray-50 transition"
                                     >
                                         <td className="px-6 py-4 text-center">{item.truckId}</td>
+                                        <td className="px-6 py-4 text-center">{item.zone}</td>
                                         <td className="px-6 py-4 text-center">{item.zone}</td>
                                         <td className="px-6 py-4 text-center">{item.full12kg}</td>
                                         <td className="px-6 py-4 text-center">{item.full25kg}</td>
