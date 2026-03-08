@@ -20,7 +20,7 @@ type LatLng = {
 
 declare global {
     interface Window {
-        google?: any;
+        google: any;
     }
 }
 
