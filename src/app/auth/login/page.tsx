@@ -30,7 +30,7 @@ export default function SignInPage() {
       toast.success(response.message || 'Login successful!');
       router.push('/')
     } catch (error: any) {
-      toast.error(error.data?.detail || 'Login failed. Please try again.');
+      toast.error(error?.data?.message || 'Login failed. Please try again.');
       console.error('Login error:', error);
     }
   }
