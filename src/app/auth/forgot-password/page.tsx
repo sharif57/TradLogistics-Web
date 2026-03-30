@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail } from 'lucide-react'
+import { Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useForgotPasswordMutation } from '@/redux/feature/authSlice';
@@ -10,20 +10,20 @@ import { toast } from 'sonner';
 
 export default function ForgotPassword() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
   const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       const response = await forgotPassword({
-        email
+        phone
       }).unwrap();
       console.log('Forgot password response:', response);
-      toast.success(response.message || 'OTP sent! Please check your email.');
-      router.push(`/auth/forgot-otp?email=${email}`);
+      toast.success(response.message || 'OTP sent! Please check your phone.');
+      router.push(`/auth/forgot-otp?phone=${phone}`);
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to send OTP. Please try again.');
+      toast.error(error.data?.detail || 'Failed to send OTP. Please try again.');
       console.error('Forgot password error:', error);
     }
   }
@@ -52,21 +52,21 @@ export default function ForgotPassword() {
 
               {/* Form */}
               <form onSubmit={handleForgot} className="space-y-5">
-                {/* Email Input */}
+                {/* Phone Input */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone
                   </label>
                   <div className="relative">
                     <input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      id="phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <Mail className="absolute right-3 top-3.5 text-gray-400" size={20} />
+                    <Phone className="absolute right-3 top-3.5 text-gray-400" size={20} />
                   </div>
                 </div>
 

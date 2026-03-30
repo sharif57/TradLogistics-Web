@@ -5,6 +5,7 @@ import { MapPin, Clock, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import LocationSearch from '@/components/LocationSearch'
 import { useCreateDeliveryOrderMutation } from '@/redux/feature/gasCompany/companySlice'
+import { toast } from 'sonner'
 
 type DeliverySpeed = 'standard' | 'express' | 'urgent'
 
@@ -161,12 +162,14 @@ export default function CreateManualOrder() {
         }
 
         try {
-            await createDeliveryOrder(payload).unwrap()
+            const res = await createDeliveryOrder(payload).unwrap()
+            toast.success(res?.message || 'Manual order created successfully!')
             router.push('/create-manual-order/price-summary')
         } catch (error) {
             const errorMessage =
                 (error as { data?: { message?: string } })?.data?.message ||
                 'Failed to create manual order. Please try again.'
+                toast.error(errorMessage)
             setSubmitError(errorMessage)
         }
     }
@@ -211,7 +214,7 @@ export default function CreateManualOrder() {
                                         onLocationSelect={handlePickupLocationSelect}
                                     />
                                 </div>
-                                <Clock size={18} strokeWidth={1.5} className="text-gray-400" />
+                                <MapPin size={18} strokeWidth={1.5} className="text-gray-400" />
                             </div>
 
                             {/* To Destination */}
@@ -229,7 +232,7 @@ export default function CreateManualOrder() {
                                     className="shrink-0 p-2 text-gray-400 hover:text-gray-600 transition-colors"
                                     aria-label="Destination options"
                                 >
-                                    <MapPin size={18} strokeWidth={1.5} />
+                                    {/* <MapPin size={18} strokeWidth={1.5} /> */}
                                 </button>
                             </div>
                         </div>

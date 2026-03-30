@@ -51,4 +51,4 @@ function SettingsPage() {
 
 export default function Settings() {
   return <Suspense fallback={<div>Loading...</div>}><SettingsPage /></Suspense>
-}
+} 

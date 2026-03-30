@@ -64,7 +64,7 @@ export default function DashboardSidebar() {
       "/auth/register",
       "/auth/forgot-password",
       "/auth/reset-password",
-      "/auth/verify-email",
+      "/auth/verify-phone",
       "/auth/business-information",
       "/auth/sign-up",
       "/auth/forgot-otp"

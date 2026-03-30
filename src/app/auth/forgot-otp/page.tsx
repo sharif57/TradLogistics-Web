@@ -3,13 +3,14 @@
 import { useState, useRef, ChangeEvent, KeyboardEvent, ClipboardEvent, Suspense } from 'react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useVerifyEmailMutation } from '@/redux/feature/authSlice';
 import { toast } from 'sonner';
+import { useVerifyPhoneMutation } from '@/redux/feature/authSlice';
 
  function ForgotOtp() {
-  // http://localhost:3000/auth/verify-email?email=hello%40gmail.com
+  // http://localhost:3000/auth/verify-phone?phone=1234567890
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') || ''
+  const phone = searchParams.get('phone') || ''
+  console.log(phone)
   const router = useRouter();
 
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', ''])
@@ -18,16 +19,16 @@ import { toast } from 'sonner';
 
   const OTP_LENGTH = 6
 
-  const [verifyEmail, { isLoading }] = useVerifyEmailMutation();
+  const [verifyPhone, { isLoading }] = useVerifyPhoneMutation();
 
-  const handleVerifyEmail = async (e?: React.FormEvent) => {
+  const handleVerifyPhone = async (e?: React.FormEvent) => {
     e?.preventDefault();
     try {
-      const response = await verifyEmail({
+      const response = await verifyPhone({
         otp: otp.join(''),
-        email: email 
+        phone: phone
       }).unwrap();
-      toast.success(response.message || 'Email verified successfully!');
+      toast.success(response.message || 'Phone verified successfully!');
       localStorage.setItem('verificationToken', response.access_token);
       router.push('/auth/reset-password');
     } catch (error: any) {
@@ -126,10 +127,10 @@ import { toast } from 'sonner';
 
               {/* Title */}
               <h2 className="text-3xl md:text-4xl font-medium text-[#1E1E1C] mb-3">
-                Verify Your Email
+                Verify Your Phone
               </h2>
               <p className="text-gray-600 text-sm md:text-base mb-10">
-                Enter the 6-digit code we sent to your email
+                Enter the 6-digit code we sent to your phone
               </p>
 
               {/* 6 OTP Input Boxes */}
@@ -155,12 +156,12 @@ import { toast } from 'sonner';
 
               {/* Verify Button */}
               <button
-                onClick={() => handleVerifyEmail()}
+                onClick={() => handleVerifyPhone()}
                 disabled={!isOtpComplete || isLoading}
                 className="w-full bg-gradient-to-r from-[#51C7E1] to-[#0776BD] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
               >
                 {
-                  isLoading ? 'Verifying...' : 'Verify Email'
+                  isLoading ? 'Verifying...' : 'Verify Phone'
                 }
               </button>
 

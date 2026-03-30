@@ -62,7 +62,7 @@ export default function SignInPage() {
             toast.success(response.message || 'Registration successful! Please check your email to verify your account.');
             // Store data
             localStorage.setItem('businessType', businessType);
-            router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+            router.push(`/auth/verify-phone?phone=${encodeURIComponent(phoneNumber)}`);
         } catch (error: any) {
             console.error('Sign up error:', error);
             const apiMessage = error?.data?.message || error?.message
@@ -74,7 +74,7 @@ export default function SignInPage() {
                 }))
                 toast.error('Phone number already exists.')
             } else {
-                toast.error(error?.message || 'Registration failed. Please try again.')
+                toast.error(error?.data?.message || 'Registration failed. Please try again.')
             }
         }
     }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Eye, EyeOff } from 'lucide-react'
+import { Mail, Eye, EyeOff, Phone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,7 @@ import { saveTokens } from '@/service/authService'
 export default function SignInPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('');
 
   const [login, { isLoading }] = useLoginMutation();
@@ -21,14 +21,15 @@ export default function SignInPage() {
     e.preventDefault()
     try {
       const response = await login({
-        phone: email,
+        phone: phone,
         password
       }).unwrap();
       localStorage.setItem('accessToken', response.access_token);
       localStorage.setItem('businessType', response.business_type);
       await saveTokens(response.access_token);
       toast.success(response.message || 'Login successful!');
-      router.push('/')
+      // router.push('/')
+      window.location.href = '/';
     } catch (error: any) {
       toast.error(error?.data?.message || 'Login failed. Please try again.');
       console.error('Login error:', error);
@@ -58,22 +59,22 @@ export default function SignInPage() {
 
               {/* Form */}
               <form onSubmit={handleSignIn} className="space-y-5">
-                {/* Email Input */}
+                {/* Phone Input */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone
                   </label>
                   <div className="relative">
                     <input
-                      id="email"
+                      id="phone"
                       type="telephone"
                       required
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <Mail className="absolute right-3 top-3.5 text-gray-400" size={20} />
+                    <Phone className="absolute right-3 top-3.5 text-gray-400" size={20} />
                   </div>
                 </div>
 

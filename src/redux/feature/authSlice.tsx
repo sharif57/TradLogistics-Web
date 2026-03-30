@@ -31,15 +31,15 @@ export const authApi = baseApi.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "/accounts/email/send-otp/",
+        url: "/accounts/phone/send-otp/",
         method: "POST",
         body: data,
       }),
     }),
 
-    verifyEmail: builder.mutation({
+    verifyPhone: builder.mutation({
       query: (data) => ({
-        url: "/accounts/email/verify-email/",
+        url: "/accounts/phone/verify-otp/",
         method: "POST",
         body: data,
       }),
@@ -65,6 +65,6 @@ export const {
   useLoginMutation,
   useChangePasswordMutation,
   useForgotPasswordMutation,
-  useVerifyEmailMutation,
+  useVerifyPhoneMutation,
   useResetPasswordMutation,
 } = authApi;

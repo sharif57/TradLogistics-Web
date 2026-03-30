@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function DashboardHeader() {
   const pathname = usePathname();
-  if (pathname === "/support" || pathname === "/inbox" || pathname === "/auth/login" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-email" || pathname === "/auth/business-information" || pathname === "/auth/sign-up" || pathname === "/auth/forgot-otp") return null
+  if (pathname === "/support" || pathname === "/inbox" || pathname === "/auth/login" || pathname === "/auth/forgot-password" || pathname === "/auth/reset-password" || pathname === "/auth/verify-phone" || pathname === "/auth/business-information" || pathname === "/auth/sign-up" || pathname === "/auth/forgot-otp" ) return null
 
   const { data } = useUserProfileQuery(undefined);
   const user = data?.data;
@@ -18,7 +18,7 @@ export default function DashboardHeader() {
 
   return (
     <div className="py- px- md:px-6 lg:px-8">
-      <header className="bg-white lg:mt-4 shadow-sm border border-primary lg:rounded-lg px-4 md:px-6 py-4 lg:mr-4 ">
+      <header className="bg-white lg:mt-4 shadow-sm border border-primary lg:rounded-lg px-4 md:px-6 py-4  ">
         <div className="flex items-center justify-between">
           <div className="hidden sm:block">
             <h1 className="lg:text-2xl font-medium text-[#1E1E1C]">Welcome, {user?.first_name + " " + user?.last_name}</h1>
@@ -54,7 +54,7 @@ export default function DashboardHeader() {
               </Avatar>
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-gray-900">{user?.first_name + " " + user?.last_name || "User"} </p>
-                <p className="text-xs text-gray-500">{user?.role}</p>
+                <p className="text-xs text-gray-500">{user?.role}({user?.business_type})</p>
               </div>
             </Link>
           </div>

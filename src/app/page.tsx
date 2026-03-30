@@ -12,8 +12,6 @@ export default function Home() {
   const { data } = useUserProfileQuery(undefined);
   const isGasCompany = data?.data?.business_type === "gas_company";
 
-
-
   return (
     <div className="space-y-8 mt-6 py-4 px-4 md:px-6 lg:px-8">
       {

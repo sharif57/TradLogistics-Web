@@ -6,6 +6,7 @@ import DashboardSidebar from "@/components/ui/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/ui/dashboard/DashboardHeader";
 import Providers from "@/Provider/Providers";
 import { Toaster } from "sonner";
+import { DeliveryWebSocketProvider } from "@/lib/Deliverywebsocketcontext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,20 +31,22 @@ export default function DashboardLayout({
           {/* Sidebar */}
 
           <Providers>
-            <DashboardSidebar />
+            <DeliveryWebSocketProvider>
+              <DashboardSidebar />
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-              {/* Header */}
-              <DashboardHeader />
+              {/* Main Content Area */}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Header */}
+                <DashboardHeader />
 
-              {/* Page Content */}
-              <main className="flex-1 overflow-y-auto ">
-                {/* <main className="flex-1 overflow-y-auto "> */}
-                <Toaster />
-                {children}
-              </main>
-            </div>
+                {/* Page Content */}
+                <main className="flex-1 overflow-y-auto ">
+                  {/* <main className="flex-1 overflow-y-auto "> */}
+                  <Toaster />
+                  {children}
+                </main>
+              </div>
+            </DeliveryWebSocketProvider>
           </Providers>
         </div>
       </body>

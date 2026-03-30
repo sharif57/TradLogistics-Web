@@ -15,7 +15,7 @@ export const chatApi = baseApi.injectEndpoints({
 
     getInbox: builder.query({
       query: () => ({
-        url: `/chat/conversations/`,
+        url: `/chat/conversations/`,                                                               
         method: "GET",
       }),
       providesTags: ["Chat"],
