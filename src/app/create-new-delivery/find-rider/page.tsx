@@ -7,6 +7,7 @@ import {
     useCancelDeliveryMutation,
     useGetDeliveryQuery,
     useRateDeliveryMutation,
+    useUpdateDeliveryStatusMutation,
 } from "@/redux/feature/deliverySlice";
 import {
     Copy,
@@ -47,23 +48,23 @@ const MESSAGE_PANEL_STATUSES: DeliveryStatus[] = [
 ];
 
 const STATUS_LABELS: Record<DeliveryStatus, string> = {
-    pending:            "Pending",
-    searching:          "Searching for a driver…",
-    driver_assigned:    "Driver Assigned",
-    arrived_at_pickup:  "Driver Arrived at Pickup",
-    picked_up:          "Package Picked Up",
-    in_transit:         "In Transit",
+    pending: "Pending",
+    searching: "Searching for a driver…",
+    driver_assigned: "Driver Assigned",
+    arrived_at_pickup: "Driver Arrived at Pickup",
+    picked_up: "Package Picked Up",
+    in_transit: "In Transit",
     arrived_at_dropoff: "Arrived at Drop-off",
-    delivered:          "Delivered",
-    cancelled:          "Cancelled",
+    delivered: "Delivered",
+    cancelled: "Cancelled",
 };
 
 const WS_INDICATOR: Record<WsConnectionStatus, { dot: string; label: string }> = {
-    idle:         { dot: "bg-slate-400",                  label: "Idle"         },
-    connecting:   { dot: "bg-yellow-400 animate-pulse",   label: "Connecting"   },
-    connected:    { dot: "bg-green-500",                  label: "Connected"    },
-    reconnecting: { dot: "bg-orange-400 animate-pulse",   label: "Reconnecting" },
-    disconnected: { dot: "bg-red-500",                    label: "Disconnected" },
+    idle: { dot: "bg-slate-400", label: "Idle" },
+    connecting: { dot: "bg-yellow-400 animate-pulse", label: "Connecting" },
+    connected: { dot: "bg-green-500", label: "Connected" },
+    reconnecting: { dot: "bg-orange-400 animate-pulse", label: "Reconnecting" },
+    disconnected: { dot: "bg-red-500", label: "Disconnected" },
 };
 
 declare global {
@@ -78,7 +79,7 @@ const loadGoogleMapsScript = (apiKey: string): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
         const existing = document.querySelector("script[data-google-maps='true']");
         if (existing) {
-            existing.addEventListener("load",  () => resolve());
+            existing.addEventListener("load", () => resolve());
             existing.addEventListener("error", () => reject(new Error("Google Maps failed to load")));
             return;
         }
@@ -86,7 +87,7 @@ const loadGoogleMapsScript = (apiKey: string): Promise<void> => {
         s.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
         s.async = true; s.defer = true;
         s.dataset.googleMaps = "true";
-        s.onload  = () => resolve();
+        s.onload = () => resolve();
         s.onerror = () => reject(new Error("Google Maps failed to load"));
         document.head.appendChild(s);
     });
@@ -95,12 +96,14 @@ const loadGoogleMapsScript = (apiKey: string): Promise<void> => {
 // ─── FindingRider ─────────────────────────────────────────────────────────────
 
 function FindingRider() {
-    const params     = useSearchParams();
+    const params = useSearchParams();
     const deliveryId = params.get("deliveryId");
-    const router     = useRouter();
+    const router = useRouter();
 
     // ── Global WebSocket — already alive from layout ──────────────────────────
     const { delivery: wsDelivery, wsStatus, setDeliveryId } = useDeliveryWS();
+
+    const [updateDeliveryStatus, { isLoading: completingDelivery }] = useUpdateDeliveryStatusMutation();
 
     // Tell the global WS which delivery to watch whenever the URL param changes
     useEffect(() => {
@@ -131,26 +134,26 @@ function FindingRider() {
     }, [wsDelivery, restData]);
 
     // ── Derived values ────────────────────────────────────────────────────────
-    const status    = (delivery?.status ?? "searching") as DeliveryStatus;
+    const status = (delivery?.status ?? "searching") as DeliveryStatus;
     const apiDriver = (delivery?.driver as Record<string, unknown> | null | undefined) ?? null;
 
-    const IMAGE     = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
+    const IMAGE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
     const GOOGLEAPI = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
     const pinDigits = String(delivery?.verification_pin ?? "")
         .split("").filter(c => /\d/.test(c)).map(Number);
 
     const driver = {
-        name:         String(apiDriver?.name              ?? "Assigned Driver"),
-        rating:       Number(apiDriver?.average_rating    ?? 0),
-        price:        delivery?.price ? `$${String(delivery.price)}` : "$0",
-        vehicleType:  String(apiDriver?.vehicle_type      ?? delivery?.vehicle_type ?? "Vehicle"),
-        brand:        String(apiDriver?.brand             ?? "N/A"),
-        model:        String(apiDriver?.model             ?? "N/A"),
+        name: String(apiDriver?.name ?? "Assigned Driver"),
+        rating: Number(apiDriver?.average_rating ?? 0),
+        price: delivery?.price ? `$${String(delivery.price)}` : "$0",
+        vehicleType: String(apiDriver?.vehicle_type ?? delivery?.vehicle_type ?? "Vehicle"),
+        brand: String(apiDriver?.brand ?? "N/A"),
+        model: String(apiDriver?.model ?? "N/A"),
         registration: String(apiDriver?.registration_number ?? "N/A"),
-        phone:        String(apiDriver?.phone             ?? "N/A"),
-        pin:          pinDigits.length > 0 ? pinDigits : [0, 0, 0, 0],
-        avatar:       IMAGE
+        phone: String(apiDriver?.phone ?? "N/A"),
+        pin: pinDigits.length > 0 ? pinDigits : [0, 0, 0, 0],
+        avatar: IMAGE
             ? `${IMAGE}${String(apiDriver?.profile_image ?? "/image/user.png")}`
             : "/image/user.png",
     };
@@ -179,7 +182,7 @@ function FindingRider() {
     // ── Map ───────────────────────────────────────────────────────────────────
     const mapRef = useRef<HTMLDivElement | null>(null);
     const [mapsLoaded, setMapsLoaded] = useState(false);
-    const [mapError,   setMapError]   = useState<string | null>(null);
+    const [mapError, setMapError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!GOOGLEAPI) { setMapError("NEXT_PUBLIC_GOOGLE_API_KEY not set"); return; }
@@ -200,7 +203,7 @@ function FindingRider() {
         bounds.extend(pickup); bounds.extend(dropoff);
         map.fitBounds(bounds, 120);
 
-        const pM = new window.google.maps.Marker({ position: pickup,  map, title: "Pickup",  label: "P" });
+        const pM = new window.google.maps.Marker({ position: pickup, map, title: "Pickup", label: "P" });
         const dM = new window.google.maps.Marker({ position: dropoff, map, title: "Dropoff", label: "D" });
 
         const dr = new window.google.maps.DirectionsRenderer({
@@ -227,25 +230,26 @@ function FindingRider() {
     }, [mapsLoaded, pickup, dropoff]);
 
     // ── Modals ────────────────────────────────────────────────────────────────
-    const [showModal,        setShowModal]        = useState(false);
-    const [showConfirm,      setShowConfirm]      = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [showMessagePanel, setShowMessagePanel] = useState(false);
-    const [showRating,       setShowRating]       = useState(false);
+    const [showRating, setShowRating] = useState(false);
 
     const closeAllModals = useCallback(() => {
+
         setShowModal(false); setShowMessagePanel(false);
         setShowConfirm(false); setShowRating(false);
     }, []);
 
     // ── Mutations ─────────────────────────────────────────────────────────────
-    const [createConversation]                         = useCreateConversationMutation();
-    const [cancelDelivery]                             = useCancelDeliveryMutation();
+    const [createConversation] = useCreateConversationMutation();
+    const [cancelDelivery] = useCancelDeliveryMutation();
     const [rateDelivery, { isLoading: ratingLoading }] = useRateDeliveryMutation();
 
     // ── Misc state ────────────────────────────────────────────────────────────
-    const [message,              setMessage]              = useState("");
-    const [pinCopied,            setPinCopied]            = useState(false);
-    const [rating,               setRating]               = useState(0);
+    const [message, setMessage] = useState("");
+    const [pinCopied, setPinCopied] = useState(false);
+    const [rating, setRating] = useState(0);
     const [conversationPublicId, setConversationPublicId] = useState<string | null>(null);
 
     // ── Conversation ──────────────────────────────────────────────────────────
@@ -258,7 +262,7 @@ function FindingRider() {
     const ensureConversation = async () => {
         if (conversationPublicId) { updateConversationQuery(conversationPublicId); return conversationPublicId; }
         const res = await createConversation({
-            user_id:     apiDriver ? (apiDriver as Record<string, unknown>).user_id : undefined,
+            user_id: apiDriver ? (apiDriver as Record<string, unknown>).user_id : undefined,
             delivery_id: delivery?.id,
         }).unwrap();
         const publicId = String(res.data?.public_id || "");
@@ -267,14 +271,14 @@ function FindingRider() {
     };
 
     const openModal = useCallback((modal: "match" | "message" | "confirm" | "rating") => {
-        setShowModal       (modal === "match");
+        setShowModal(modal === "match");
         setShowMessagePanel(modal === "message");
-        setShowConfirm     (modal === "confirm");
-        setShowRating      (modal === "rating");
+        setShowConfirm(modal === "confirm");
+        setShowRating(modal === "rating");
         if (modal === "message" && delivery?.id) {
             ensureConversation().catch(() => toast.error("Unable to start chat."));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [delivery?.id]);
 
     // ── Status → modal ────────────────────────────────────────────────────────
@@ -298,6 +302,16 @@ function FindingRider() {
         }
         if (status === "cancelled") { console.log("[MODAL] → Cancelled"); closeAllModals(); }
     }, [status, closeAllModals]);
+
+    // ── is_completed from WS → auto close ─────────────────────────────────────
+    useEffect(() => {
+        const isCompleted = delivery?.is_completed === true;
+        if (isCompleted) {
+            console.log("[WS] is_completed=true received, closing modals");
+            closeAllModals();
+            setDeliveryId(null);
+        }
+    }, [delivery?.is_completed, closeAllModals]);
 
     // ── Action handlers ───────────────────────────────────────────────────────
     const copyPin = async () => {
@@ -333,13 +347,28 @@ function FindingRider() {
         } catch (e: any) { toast.error(e.data?.detail || "Failed to cancel delivery."); }
     };
 
-    const handleSubmitRating = async () => {
-        if (rating === 0) return;
+    const handleCompleteAndOpenRating = async () => {
+        if (!deliveryId || completingDelivery) return;
         try {
+            await updateDeliveryStatus({ deliveryId, data: { is_completed: true } }).unwrap();
+            toast.success("Delivery completed!");
+            closeAllModals();
+            setDeliveryId(null);
+        } catch (e: any) {
+            toast.error(e.data?.detail || "Failed to complete delivery.");
+        }
+    };
+
+
+
+    const handleSubmitRating = async () => {
+        if (!deliveryId || rating === 0 || completingDelivery) return;
+        try {
+            await updateDeliveryStatus({ deliveryId, data: { is_completed: true } }).unwrap();
             const res = await rateDelivery({ deliveryId, data: { rating } }).unwrap();
             toast.success(res.message || "Rating submitted!");
             closeAllModals();
-            setDeliveryId(null); // stop watching after delivery is rated
+            setDeliveryId(null);
         } catch (e: any) { toast.error(e.data?.detail || "Failed to submit rating."); }
     };
 
@@ -347,7 +376,8 @@ function FindingRider() {
     const isTechLoading = !mapsLoaded || (isLoading && !wsDelivery);
 
     const etaLabel = MESSAGE_PANEL_STATUSES.includes(status)
-        ? `Dropoff at ${String(delivery?.estimate_arrival_time ?? "—")}`
+        ? `Dropoff at ${delivery?.estimate_arrival_time
+            ? `${Math.floor(Number(delivery.estimate_arrival_time) / 60)}h ${Number(delivery.estimate_arrival_time) % 60}min` : "—"}`
         : `Pickup in ${String(delivery?.estimated_pickup_time ?? delivery?.estimate_arrival_time ?? "—")} min`;
 
     const wsIndicator = WS_INDICATOR[wsStatus];
@@ -359,9 +389,8 @@ function FindingRider() {
             {/* Map canvas */}
             <div
                 ref={mapRef}
-                className={`absolute inset-0 w-full h-full transition-all duration-500 ${
-                    isTechLoading ? "blur-md scale-105" : "blur-0 scale-100"
-                }`}
+                className={`absolute inset-0 w-full h-full transition-all duration-500 ${isTechLoading ? "blur-md scale-105" : "blur-0 scale-100"
+                    }`}
             />
 
             {/* WS status pill — top-left corner */}
@@ -379,16 +408,16 @@ function FindingRider() {
             {/* ── Loading / Searching ──────────────────────────────────────── */}
             {(isTechLoading || status === "searching" || status === "pending") &&
                 !showModal && !showMessagePanel && !showRating && (
-                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <p className="mt-4 text-white text-3xl font-normal text-center animate-pulse px-6">
-                        Finding the best ride for your pickup time....
-                    </p>
-                    <iframe
-                        src="https://lottie.host/embed/3cc3045f-0253-4110-8042-ef1f567f99b8/A6ojvct8Uk.lottie"
-                        className="w-48 h-48 md:w-80 md:h-80"
-                    />
-                </div>
-            )}
+                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <p className="mt-4 text-white text-3xl font-normal text-center animate-pulse px-6">
+                            Finding the best ride for your pickup time....
+                        </p>
+                        <iframe
+                            src="https://lottie.host/embed/3cc3045f-0253-4110-8042-ef1f567f99b8/A6ojvct8Uk.lottie"
+                            className="w-48 h-48 md:w-80 md:h-80"
+                        />
+                    </div>
+                )}
 
             {/* ── Match Modal (driver_assigned / arrived_at_pickup) ─────────── */}
             {showModal && (
@@ -405,8 +434,9 @@ function FindingRider() {
                         </div>
 
                         <div
-                            className="absolute top-0 right-0 bg-[#BF0C0A] cursor-pointer p-2 rounded-bl-3xl rounded-tr-xl"
-                            onClick={closeAllModals}
+                            className={`absolute top-0 right-0 p-2 rounded-bl-3xl rounded-tr-xl ${completingDelivery ? "bg-slate-400 cursor-not-allowed" : "bg-[#BF0C0A] cursor-pointer"
+                                }`}
+                            onClick={handleCompleteAndOpenRating}
                         >
                             <X className="text-white w-5 h-5" />
                         </div>
@@ -525,8 +555,12 @@ function FindingRider() {
                                 <button onClick={() => openModal("confirm")} className="text-slate-500">
                                     Cancel this Delivery?
                                 </button>
-                                <button onClick={() => openModal("rating")} className="text-red-500">
-                                    Finish & Rate
+                                <button
+                                    onClick={handleCompleteAndOpenRating}
+                                    disabled={completingDelivery}
+                                    className="text-red-500 disabled:cursor-not-allowed disabled:text-red-300"
+                                >
+                                    {completingDelivery ? "Finishing..." : "Finish & Rate"}
                                 </button>
                             </div>
                         </div>
@@ -581,7 +615,7 @@ function FindingRider() {
                         <div className="mt-6 flex items-center justify-center">
                             <Rating
                                 onClick={r => setRating(r)}
-                                onPointerEnter={() => {}} onPointerLeave={() => {}} onPointerMove={() => {}}
+                                onPointerEnter={() => { }} onPointerLeave={() => { }} onPointerMove={() => { }}
                                 initialValue={rating} size={40} allowFraction={false} transition
                                 fillColor="#F59E0B" emptyColor="#D1D5DB"
                                 style={{ display: "flex", gap: "8px" }}
@@ -591,11 +625,10 @@ function FindingRider() {
                         <button
                             onClick={handleSubmitRating}
                             disabled={rating === 0}
-                            className={`mt-6 w-full py-2 rounded transition-all ${
-                                rating === 0
+                            className={`mt-6 w-full py-2 rounded transition-all ${rating === 0
                                     ? "bg-slate-200 text-slate-400 cursor-not-allowed"
                                     : "bg-gradient-to-r from-[#51C7E1] to-[#0776BD] text-white"
-                            }`}
+                                }`}
                         >
                             {ratingLoading ? (
                                 <span className="flex items-center justify-center">

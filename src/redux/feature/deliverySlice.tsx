@@ -120,7 +120,17 @@ export const deliveryApi = baseApi.injectEndpoints({
             providesTags: ["Delivery"],
         }),
 
+        // /order/deliveries/1/
+        updateDeliveryStatus: builder.mutation({
+            query: ({ deliveryId, data }) => ({
+                url: `/order/deliveries/${deliveryId}/`,
+                method: "PATCH",
+                body: data,
+            }),
+            invalidatesTags: ["Delivery"],
+        })
+
     }),
 });
 
-export const { useCreateDeliveryMutation, useGetDeliveryQuery, useSearchDriverAndAssignMutation, useCancelDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery, useRateDeliveryMutation, useGetClientDashboardQuery } = deliveryApi;
+export const { useCreateDeliveryMutation, useGetDeliveryQuery, useSearchDriverAndAssignMutation, useCancelDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery, useRateDeliveryMutation, useGetClientDashboardQuery, useUpdateDeliveryStatusMutation } = deliveryApi;

@@ -159,6 +159,7 @@ export function DeliveryWebSocketProvider({ children }: { children: ReactNode })
                 console.log("  created_at     :", d?.created_at);
                 console.log("  updated_at     :", d?.updated_at);
                 console.log("  Full object    :", d);
+                console.log("  is_completed   :", d?.is_completed);
             } else {
                 console.warn("  data array empty or missing");
             }

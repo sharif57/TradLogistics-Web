@@ -50,6 +50,7 @@ const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string
         direction: "asc",
     });
     const { data, isLoading, isError } = useGetDeliveriesQuery(undefined);
+    console.log(data?.data, '========')
 
     const deliveries = useMemo(() => {
         const response = data as DeliveriesApiResponse | undefined;
@@ -97,157 +98,190 @@ const RecentDeliveriesTable = ({ title, track }: { title: string, track?: string
         }
         setSortConfig({ key, direction });
     };
+    // const items = [
+    //     {
+    //         title: 'In Transit',
+    //         count: 42
+    //     },
+    //     {
+    //         title: 'Scheduled',
+    //         count: 95
+    //     },
+    //     {
+    //         title: 'Completed',
+    //         count: 40
+    //     }
+    // ]
 
     return (
-        <div className="w-full bg-white rounded-lg">
-            <div className="mx-auto">
-                <div className="flex items-center justify-between border-b border-gray-200">
-                    <h2 className="text-2xl p-4 font-medium text-[#1A1918]">
-                        {title}
-                    </h2>
-                </div>
+        <div>
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-xl py-4">
+                {items?.map((item, index) => (
+                    <div
+                        key={index}
+                        className="flex items-center justify-between bg-[#F2F2F2] px-4 py-3 cursor-pointer rounded-lg"
+                    >
+                        <p className="text-lg font-medium text-[#1E1E1C]">
+                            {item.title}
+                        </p>
+
+                        <span className="flex items-center justify-center bg-secondary text-black w-8 h-8 rounded-full text-sm font-semibold">
+                            {item.count}
+                        </span>
+                    </div>
+                ))}
+            </div> */}
+
+            <div className="w-full bg-white rounded-lg">
+                <div className="mx-auto">
+                    <div className="flex items-center justify-between border-b border-gray-200">
+                        <h2 className="text-2xl p-4 font-medium text-[#1A1918]">
+                            {title}
+                        </h2>
+                    </div>
 
 
 
-                {/* Table */}
-                <div className="overflow-hidden border border-gray-200">
-                    <table className="w-full text-sm">
-                        <thead className="bg-primary text-white">
-                            <tr>
-                                {[
-                                    "delivery_id",
-                                    "pickup",
-                                    "dropoff",
-                                    "status",
-                                    "date",
-                                    "cost",
-                                ].map((key) => (
-                                    <th
-                                        key={key}
-                                        onClick={() => handleSort(key as keyof DeliveryRow)}
-                                        className="px-6 py-6 text-center text-lg font-normal cursor-pointer hover:bg-primary/80 transition"
-                                    >
-                                        <div className="flex items-center justify-center gap-2 capitalize">
-                                            {key.replace("_", " ")}
-                                        </div>
+                    {/* Table */}
+                    <div className="overflow-hidden border border-gray-200">
+                        <table className="w-full text-sm">
+                            <thead className="bg-primary text-white">
+                                <tr>
+                                    {[
+                                        "delivery_id",
+                                        "pickup",
+                                        "dropoff",
+                                        "status",
+                                        "date",
+                                        "cost",
+                                    ].map((key) => (
+                                        <th
+                                            key={key}
+                                            onClick={() => handleSort(key as keyof DeliveryRow)}
+                                            className="px-6 py-6 text-center text-lg font-normal cursor-pointer hover:bg-primary/80 transition"
+                                        >
+                                            <div className="flex items-center justify-center gap-2 capitalize">
+                                                {key.replace("_", " ")}
+                                            </div>
+                                        </th>
+                                    ))}
+                                    <th className="px-6 py-6 text-center text-lg font-normal">
+                                        Actions
                                     </th>
-                                ))}
-                                <th className="px-6 py-6 text-center text-lg font-normal">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {isLoading ? (
-                                <tr>
-                                    <td
-                                        colSpan={7}
-                                        className="text-center py-12 text-gray-500"
-                                    >
-                                        Loading deliveries...
-                                    </td>
                                 </tr>
-                            ) : isError ? (
-                                <tr>
-                                    <td
-                                        colSpan={7}
-                                        className="text-center py-12 text-red-500"
-                                    >
-                                        Failed to load deliveries
-                                    </td>
-                                </tr>
-                            ) : sortedData.length === 0 ? (
-                                <tr>
-                                    <td
-                                        colSpan={7}
-                                        className="text-center py-12 text-gray-500"
-                                    >
-                                        No data found
-                                    </td>
-                                </tr>
-                            ) : (
-                                sortedData.map((item) => (
-                                    <tr
-                                        key={item.delivery_id}
-                                        className="border-t hover:bg-gray-50 transition"
-                                    >
-                                        <td className="px-6 py-4 text-center">{item.delivery_id}</td>
-                                        <td className="px-6 py-4 text-center">{item.pickup}</td>
-                                        <td className="px-6 py-4 text-center">{item.dropoff}</td>
-                                        <td className="px-6 py-4 text-center">{item.status}</td>
-                                        <td className="px-6 py-4 text-center">{item.date}</td>
-                                        <td className="px-6 py-4 text-center">{item.cost}</td>
+                            </thead>
 
-                                        {/* Actions */}
-                                        <td className="px-6 py-4 relative text-center">
+                            <tbody>
+                                {isLoading ? (
+                                    <tr>
+                                        <td
+                                            colSpan={7}
+                                            className="text-center py-12 text-gray-500"
+                                        >
+                                            Loading deliveries...
+                                        </td>
+                                    </tr>
+                                ) : isError ? (
+                                    <tr>
+                                        <td
+                                            colSpan={7}
+                                            className="text-center py-12 text-red-500"
+                                        >
+                                            Failed to load deliveries
+                                        </td>
+                                    </tr>
+                                ) : sortedData.length === 0 ? (
+                                    <tr>
+                                        <td
+                                            colSpan={7}
+                                            className="text-center py-12 text-gray-500"
+                                        >
+                                            No data found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    sortedData.map((item) => (
+                                        <tr
+                                            key={item.delivery_id}
+                                            className="border-t hover:bg-gray-50 transition"
+                                        >
+                                            <td className="px-6 py-4 text-center">{item.delivery_id}</td>
+                                            <td className="px-6 py-4 text-center">{item.pickup}</td>
+                                            <td className="px-6 py-4 text-center">{item.dropoff}</td>
+                                            <td className="px-6 py-4 text-center">{item.status}</td>
+                                            <td className="px-6 py-4 text-center">{item.date}</td>
+                                            <td className="px-6 py-4 text-center">{item.cost}</td>
 
-                                            {
-                                                track === "track" ? (
-                                                    <Link href={`/deliveries/${item.delivery_id}`} className="inline-flex justify-center"><Button variant="outline">{track}</Button></Link>
+                                            {/* Actions */}
+                                            <td className="px-6 py-4 relative text-center">
 
-                                                )
-                                                    :
-                                                    (<Dialog>
-                                                        <form>
-                                                            <DialogTrigger asChild>
-                                                                <Link href={`/create-new-delivery/find-rider?deliveryId=${item.delivery_id}`}>
-                                                                    <Button variant="outline">
-                                                                        <span className="text-primary">{item.action}</span>
-                                                                    </Button>
-                                                                </Link>
-                                                            </DialogTrigger>
-                                                            <DialogContent className="sm:max-w-[425px]">
-                                                                {/* <DialogHeader>
+                                                {
+                                                    track === "track" ? (
+                                                        <Link href={`/deliveries/${item.delivery_id}`} className="inline-flex justify-center"><Button variant="outline">{track}</Button></Link>
+
+                                                    )
+                                                        :
+                                                        (<Dialog>
+                                                            <form>
+                                                                <DialogTrigger asChild>
+                                                                    <Link href={`/create-new-delivery/find-rider?deliveryId=${item.delivery_id}`}>
+                                                                        <Button variant="outline">
+                                                                            <span className="text-primary">{item.action}</span>
+                                                                        </Button>
+                                                                    </Link>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="sm:max-w-[425px]">
+                                                                    {/* <DialogHeader>
                                                             <DialogTitle>Edit profile</DialogTitle>
                                                             
                                                         </DialogHeader> */}
-                                                                <div className="flex items-center justify-between pt-6">
-                                                                    <div className="flex items-start gap-4">
-                                                                        <Image src="/image/user.png" alt="Logo" width={500} className="size-14 rounded-full" height={500}></Image>
-                                                                        <div>
-                                                                            <h1 className="text-xl font-medium text-[#1E1E1C]">Pedro Duarte</h1>
-                                                                            <div className="flex items-center gap-2">
-                                                                                <Ratting />
-                                                                                <p>4.9</p>
+                                                                    <div className="flex items-center justify-between pt-6">
+                                                                        <div className="flex items-start gap-4">
+                                                                            <Image src="/image/user.png" alt="Logo" width={500} className="size-14 rounded-full" height={500}></Image>
+                                                                            <div>
+                                                                                <h1 className="text-xl font-medium text-[#1E1E1C]">Pedro Duarte</h1>
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <Ratting />
+                                                                                    <p>4.9</p>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
+                                                                        <p className="text-2xl font-medium text-[#1E1E1C]">$120</p>
                                                                     </div>
-                                                                    <p className="text-2xl font-medium text-[#1E1E1C]">$120</p>
-                                                                </div>
-                                                                <div className="space-y-4">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Car />
-                                                                        <p className="text-lg font-medium text-[#4B5563]">Toyota Hiace • DHK-1243</p>
+                                                                    <div className="space-y-4">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <Car />
+                                                                            <p className="text-lg font-medium text-[#4B5563]">Toyota Hiace • DHK-1243</p>
+                                                                        </div>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <Phone />
+                                                                            <p className="text-lg font-medium text-[#4B5563]">0123654789</p>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Phone />
-                                                                        <p className="text-lg font-medium text-[#4B5563]">0123654789</p>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="grid gap-4 pt-2">
-                                                                    <div className="grid gap-3">
-                                                                        <Input id="name-1" name="name" placeholder="message driver" />
-                                                                    </div>
+                                                                    <div className="grid gap-4 pt-2">
+                                                                        <div className="grid gap-3">
+                                                                            <Input id="name-1" name="name" placeholder="message driver" />
+                                                                        </div>
 
-                                                                </div>
-                                                                <DialogFooter>
-                                                                    <DialogClose asChild>
-                                                                        <Button variant="outline">Cancel</Button>
-                                                                    </DialogClose>
-                                                                    <Button type="submit">Send</Button>
-                                                                </DialogFooter>
-                                                            </DialogContent>
-                                                        </form>
-                                                    </Dialog>)
-                                            }
+                                                                    </div>
+                                                                    <DialogFooter>
+                                                                        <DialogClose asChild>
+                                                                            <Button variant="outline">Cancel</Button>
+                                                                        </DialogClose>
+                                                                        <Button type="submit">Send</Button>
+                                                                    </DialogFooter>
+                                                                </DialogContent>
+                                                            </form>
+                                                        </Dialog>)
+                                                }
 
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
