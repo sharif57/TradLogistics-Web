@@ -25,13 +25,14 @@ import { cn } from "@/lib/utils";
 import Box from "@/components/icon/sidebar/box";
 import Car from "@/components/icon/sidebar/car";
 import Order from "@/components/icon/sidebar/order";
+import { useCreateConversationMutation } from "@/redux/feature/chatSlice";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: BarChart3, label: "Deliveries", href: "/deliveries" },
   { icon: MdPayment, label: "Payment", href: "/payment" },
-  { icon: MdOutlineSupportAgent, label: "Support", href: "/support" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
+  { icon: MdOutlineSupportAgent, label: "Support", href: "/support" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
@@ -56,6 +57,17 @@ export default function DashboardSidebar() {
 
 
   const { data } = useUserProfileQuery(undefined);
+  // const userId = data?.data?.user_id;
+  const [createConversation] = useCreateConversationMutation();
+
+  const handleSupportClick = async () => {
+    try {
+      const res = await createConversation({ user_id: '1' }).unwrap();
+      router.push(`/support?conversationId=${res.data?.public_id}`)
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+    }
+  }
 
   // Hide sidebar on auth pages
   if (
@@ -116,7 +128,7 @@ export default function DashboardSidebar() {
           </div>
 
           <nav className="mt-6 space-y-2 px-3">
-            {activeMenuItems.map((item) => {
+            {/* {activeMenuItems.map((item) => {
               const Icon = item.icon;
               // Highlight if exact match OR if we're inside that section
               const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -148,6 +160,65 @@ export default function DashboardSidebar() {
                     <Icon size={20} />
                   </span>
                   <span className="transition-transform text-lg font-normal duration-200 group-hover:translate-x-0.5">{item.label}</span>
+                </Link>
+              );
+            })} */}
+
+            {activeMenuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+              const itemClassName = cn(
+                "group relative isolate overflow-hidden flex items-center gap-3.5 rounded-xl px-5 py-3 text-sm font-medium",
+                "transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                isActive
+                  ? "bg-gradient-to-l from-[#0776BD] to-[#51C7E1] text-white shadow-sm"
+                  : "text-gray-700 hover:text-primary"
+              );
+
+              const inner = (
+                <>
+                  {!isActive ? (
+                    <>
+                      <span className="absolute inset-0 -z-10 -translate-x-full bg-primary/10 transition-transform duration-300 ease-out group-hover:translate-x-0" />
+                      <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-primary/70 origin-center scale-y-0 transition-transform duration-200 ease-out group-hover:scale-y-100" />
+                    </>
+                  ) : (
+                    <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-white/80" />
+                  )}
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                    <Icon size={20} />
+                  </span>
+                  <span className="transition-transform text-lg font-normal duration-200 group-hover:translate-x-0.5">
+                    {item.label}
+                  </span>
+                </>
+              );
+
+              // ✅ Support gets a button that calls the API, all others get a Link
+              if (item.href === "/support") {
+                return (
+                  <button
+                    key={item.href}
+                    className={cn(itemClassName, "w-full text-left")}
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleSupportClick();
+                    }}
+                  >
+                    {inner}
+                  </button>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={itemClassName}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {inner}
                 </Link>
               );
             })}

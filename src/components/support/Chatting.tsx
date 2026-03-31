@@ -1,0 +1,99 @@
+'use client'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Menu } from 'lucide-react'
+import ChatMessages from '../home/chat-messages'
+import ChatInput from '../home/chat-input'
+// import ChatHeader from '@/components/chat-header'
+// import ChatMessages from '@/components/chat-messages'
+// import ChatInput from '@/components/chat-input'
+
+interface Message {
+  id: string
+  type: 'user' | 'support'
+  text: string
+  timestamp: string
+  label?: string
+}
+
+interface Contact {
+  id: string
+  conversationId: number
+  publicId: string
+  userId: number
+  name: string
+  role: string
+  phone: string
+  avatar: string | null
+  lastMessage: string
+  timestamp: string
+  unreadCount: number
+}
+
+interface ChatAreaProps {
+  contact: Contact | null
+  messages: Message[]
+  inputValue: string
+  onInputChange: (value: string) => void
+  onSendMessage: () => void
+  onMenuClick: () => void
+}
+
+export default function Chatting({
+  contact,
+  messages,
+  inputValue,
+  onInputChange,
+  onSendMessage,
+  onMenuClick
+}: ChatAreaProps) {
+  const IMAGE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL
+
+  return (
+    <div className="flex-1 flex flex-col h-screen w-full overflow-hidden">
+      <header className="shrink-0 w-full border-b border-border ">
+        <div className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6 md:px-8">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onMenuClick}
+              className="p-2 hover:bg-muted rounded-lg transition-colors md:hidden"
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="w-5 h-5 text-foreground" />
+            </button>
+            <div className="flex items-center gap-2">
+              {/* <Avatar>
+                <AvatarImage
+                  src={contact?.avatar ? `${IMAGE}${contact.avatar}` : 'https://github.com/shadcn.png'}
+                  alt={contact?.name || 'User'}
+                  // className="grayscale"
+                />
+                <AvatarFallback>{contact?.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+              </Avatar> */}
+              <div className="hidden sm:block">
+                {/* <p className="text-sm font-medium text-foreground">{contact?.name || 'Select a conversation'}</p> */}
+                <p className='text-sm font-semibold text-foreground'>Support</p>
+              </div>
+            </div>
+          </div>
+          {/* <button
+            className="p-2 hover:bg-muted rounded-lg transition-colors hover:scale-105"
+            aria-label="Search"
+          >
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button> */}
+        </div>
+      </header>
+
+      <ChatMessages messages={messages} />
+
+      <ChatInput
+        inputValue={inputValue}
+        onInputChange={onInputChange}
+        onSendMessage={onSendMessage}
+      />
+    </div>
+  )
+}

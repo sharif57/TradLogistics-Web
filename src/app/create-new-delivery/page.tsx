@@ -1030,7 +1030,7 @@ export default function DeliveryForm() {
                 </select>
               </div>
 
-              <div>
+              {/* <div>
                 <select
                   name="request_driver"
                   value={formData.request_driver || ''}
@@ -1048,7 +1048,7 @@ export default function DeliveryForm() {
                   <option value="jane">Jane</option>
                   <option value="mike">Mike</option>
                 </select>
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-3">
                 <input
@@ -1150,7 +1150,7 @@ export default function DeliveryForm() {
 
           {/* ── Schedule ── */}
           <div className="bg-white p-4 rounded-lg border border-gray-300">
-            <label className="block text-sm font-medium text-gray-900 mb-3">Schedule Delivery (Optional)</label>
+            <label className="block text-sm font-medium text-gray-900 mb-3">Schedule Delivery</label>
             <div className="grid grid-cols-2 gap-3">
               <input
                 type="date"

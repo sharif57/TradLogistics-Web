@@ -199,6 +199,7 @@ export default function LocationSearch({
                     type="text"
                     value={input}
                     onChange={handleInputChange}
+                    required
                     placeholder={placeholder}
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-400 text-sm"
                 />

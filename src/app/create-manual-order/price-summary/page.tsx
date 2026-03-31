@@ -1,11 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Case from '@/components/icon/payment/case'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useSearchDriverAndAssignMutation } from '@/redux/feature/deliverySlice'
+import { toast } from 'sonner'
 
 type PaymentMethod = 'cash' | 'stripe' | 'lynk' | 'jnmoney'
 
@@ -49,27 +52,37 @@ const paymentMethods = [
 
 export default function PriceSummary() {
   const router = useRouter();
+  const delivery = useSelector((state: any) => state.manualOrder?.delivery)
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('cash')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-  const priceData: PriceData = {
-    cylinderCost: 2500,
-    deliveryFee: 500,
-    speedFee: 300,
-    totalAmount: 3300
-  }
+  const [searchDriverAndAssign] = useSearchDriverAndAssignMutation();
+
+  console.log(delivery?.id, '===================')
+
+  const priceData: PriceData = delivery?.price_breakdown
+    ? {
+      cylinderCost: delivery.price_breakdown.cylinder_cost || 0,
+      deliveryFee: delivery.price_breakdown.delivery_fee || 0,
+      speedFee: delivery.price_breakdown.speed_fee || 0,
+      totalAmount: delivery.price_breakdown.total || 0,
+    }
+    : {
+      cylinderCost: 0,
+      deliveryFee: 0,
+      speedFee: 0,
+      totalAmount: 0,
+    }
 
   const handleConfirmOrder = async () => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      alert(`Order confirmed with ${selectedPayment} payment method!`)
-      router.push('/create-manual-order/price-summary/nearby-driver');
-      console.log('[v0] Order confirmed:', { selectedPayment, totalAmount: priceData.totalAmount })
-    } catch (error) {
-      console.error('[v0] Error confirming order:', error)
-      alert('Error confirming order. Please try again.')
+      const res = await searchDriverAndAssign({ deliveryId: delivery.id });
+      toast.success(res?.data?.message || 'Driver Searching!')
+      router.push(`/create-new-delivery/find-rider?deliveryId=${delivery.id}`);
+    } catch (error: any) {
+      console.error('Error confirming order:', error)
+      toast.error(error?.data.detail || 'Error confirming order. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -130,8 +143,8 @@ export default function PriceSummary() {
                     key={method.id}
                     onClick={() => setSelectedPayment(method.id as PaymentMethod)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all duration-200 ${selectedPayment === method.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
                       }`}
                   >
                     {/* Icon Badge */}

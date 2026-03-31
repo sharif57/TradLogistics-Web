@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { MapPin, Clock, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import LocationSearch from '@/components/LocationSearch'
 import { useCreateDeliveryOrderMutation } from '@/redux/feature/gasCompany/companySlice'
+import { setDelivery } from '@/redux/feature/gasCompany/manualOrderSlice'
 import { toast } from 'sonner'
 
 type DeliverySpeed = 'standard' | 'express' | 'urgent'
@@ -63,6 +65,7 @@ const loadGooglePlacesScript = (apiKey: string) => {
 
 export default function CreateManualOrder() {
     const router = useRouter()
+    const dispatch = useDispatch()
     const [createDeliveryOrder, { isLoading: isSubmitting }] = useCreateDeliveryOrderMutation()
 
     const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY
@@ -163,13 +166,14 @@ export default function CreateManualOrder() {
 
         try {
             const res = await createDeliveryOrder(payload).unwrap()
+            dispatch(setDelivery(res.data))
             toast.success(res?.message || 'Manual order created successfully!')
             router.push('/create-manual-order/price-summary')
         } catch (error) {
             const errorMessage =
                 (error as { data?: { message?: string } })?.data?.message ||
                 'Failed to create manual order. Please try again.'
-                toast.error(errorMessage)
+            toast.error(errorMessage)
             setSubmitError(errorMessage)
         }
     }
@@ -264,10 +268,8 @@ export default function CreateManualOrder() {
                             }}
                         >
                             <option value="">Selects Cylinder Size</option>
-                            <option value="20">20 lb</option>
+                            <option value="20">12 lb</option>
                             <option value="25">25 lb</option>
-                            <option value="30">30 lb</option>
-                            <option value="100">100 lb</option>
                         </select>
                         {errors.cylinderSize && (
                             <p className="text-red-500 text-xs mt-1">{errors.cylinderSize}</p>
